@@ -20,8 +20,15 @@ export function TableOfContents({ content }: TableOfContentsProps) {
 
   useEffect(() => {
     // Extract ONLY H1 and H2 headings from markdown (# and ##)
+    // But exclude code blocks (anything between ``` markers)
+
+    // First, remove all code blocks
+    const codeBlockRegex = /```[\s\S]*?```/g
+    const contentWithoutCodeBlocks = content.replace(codeBlockRegex, '')
+
+    // Now extract headings from the cleaned content
     const headingRegex = /^(#{1,2})\s+(.+)$/gm
-    const matches = Array.from(content.matchAll(headingRegex))
+    const matches = Array.from(contentWithoutCodeBlocks.matchAll(headingRegex))
 
     const extractedHeadings: Heading[] = matches.map((match, index) => {
       const level = match[1].length
