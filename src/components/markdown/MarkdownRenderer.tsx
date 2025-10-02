@@ -13,12 +13,40 @@ interface MarkdownRendererProps {
 }
 
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
+  // Helper function to generate heading IDs
+  const generateId = (text: string) => {
+    return text
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '')
+  }
+
   return (
     <div className="prose prose-slate dark:prose-invert max-w-none">
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[rehypeKatex, rehypeRaw]}
         components={{
+          h1({ children, ...props }) {
+            const text = String(children)
+            const id = generateId(text)
+            return <h1 id={id} {...props}>{children}</h1>
+          },
+          h2({ children, ...props }) {
+            const text = String(children)
+            const id = generateId(text)
+            return <h2 id={id} {...props}>{children}</h2>
+          },
+          h3({ children, ...props }) {
+            const text = String(children)
+            const id = generateId(text)
+            return <h3 id={id} {...props}>{children}</h3>
+          },
+          h4({ children, ...props }) {
+            const text = String(children)
+            const id = generateId(text)
+            return <h4 id={id} {...props}>{children}</h4>
+          },
           code({ node, inline, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || '')
             const codeString = String(children).replace(/\n$/, '')
