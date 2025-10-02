@@ -4,7 +4,8 @@ import { useState, useMemo } from 'react'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Search, SlidersHorizontal } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Search, SlidersHorizontal, X } from 'lucide-react'
 import { ProjectCard } from './ProjectCard'
 import { useProjects } from '@/hooks/useProjects'
 import { categoryLabels, type ProjectCategory } from '@/config/site'
@@ -20,7 +21,26 @@ export function ProjectsFilter() {
   const { projects, isLoading } = useProjects()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [sortBy, setSortBy] = useState<string>('newest')
+
+  const handleTagClick = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    )
+  }
+
+  const handleRemoveTag = (tag: string) => {
+    setSelectedTags((prev) => prev.filter((t) => t !== tag))
+  }
+
+  const clearAllFilters = () => {
+    setSearchQuery('')
+    setSelectedCategory('all')
+    setSelectedTags([])
+  }
+
+  const hasActiveFilters = searchQuery || selectedCategory !== 'all' || selectedTags.length > 0
 
   const filteredAndSortedProjects = useMemo(() => {
     if (!projects) return []
@@ -43,6 +63,13 @@ export function ProjectsFilter() {
       filtered = filtered.filter((project) => project.category === selectedCategory)
     }
 
+    // Filter by selected tags (project must have ALL selected tags)
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter((project) =>
+        selectedTags.every((tag) => project.tags.includes(tag))
+      )
+    }
+
     // Sort
     const sorted = [...filtered]
     switch (sortBy) {
@@ -61,7 +88,7 @@ export function ProjectsFilter() {
     }
 
     return sorted
-  }, [projects, searchQuery, selectedCategory, sortBy])
+  }, [projects, searchQuery, selectedCategory, selectedTags, sortBy])
 
   if (isLoading) {
     return <ProjectsListSkeleton />
@@ -115,23 +142,60 @@ export function ProjectsFilter() {
         </div>
       </div>
 
+      {/* Active Filters */}
+      {(selectedTags.length > 0 || selectedCategory !== 'all') && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm font-medium">Active filters:</span>
+
+          {selectedCategory !== 'all' && (
+            <Badge variant="secondary" className="gap-1">
+              {categoryLabels[selectedCategory as ProjectCategory]}
+              <button
+                onClick={() => setSelectedCategory('all')}
+                className="ml-1 hover:text-destructive"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          )}
+
+          {selectedTags.map((tag) => (
+            <Badge key={tag} variant="secondary" className="gap-1">
+              {tag}
+              <button
+                onClick={() => handleRemoveTag(tag)}
+                className="ml-1 hover:text-destructive"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ))}
+
+          {hasActiveFilters && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearAllFilters}
+              className="h-6 px-2 text-xs"
+            >
+              Clear all
+            </Button>
+          )}
+        </div>
+      )}
+
       {/* Results count */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
           {filteredAndSortedProjects.length} {filteredAndSortedProjects.length === 1 ? 'project' : 'projects'} found
         </p>
-        {selectedCategory !== 'all' && (
-          <Badge variant="secondary" className="gap-1">
-            {categoryLabels[selectedCategory as ProjectCategory]}
-          </Badge>
-        )}
       </div>
 
       {/* Projects Grid */}
       {filteredAndSortedProjects.length > 0 ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredAndSortedProjects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+            <ProjectCard key={project.id} project={project} onTagClick={handleTagClick} selectedTags={selectedTags} />
           ))}
         </div>
       ) : (

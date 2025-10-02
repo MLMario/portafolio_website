@@ -17,9 +17,11 @@ interface ProjectCardProps {
     viewCount: number
     createdAt: Date | string
   }
+  onTagClick?: (tag: string) => void
+  selectedTags?: string[]
 }
 
-export function ProjectCard({ project }: ProjectCardProps) {
+export function ProjectCard({ project, onTagClick, selectedTags = [] }: ProjectCardProps) {
   return (
     <Card className="group flex flex-col transition-all hover:shadow-lg">
       {/* Thumbnail */}
@@ -57,11 +59,24 @@ export function ProjectCard({ project }: ProjectCardProps) {
       <CardContent className="flex-1">
         {/* Tags */}
         <div className="flex flex-wrap gap-2">
-          {project.tags.slice(0, 3).map((tag) => (
-            <Badge key={tag} variant="secondary" className="text-xs">
-              {tag}
-            </Badge>
-          ))}
+          {project.tags.slice(0, 3).map((tag) => {
+            const isSelected = selectedTags.includes(tag)
+            return (
+              <Badge
+                key={tag}
+                variant={isSelected ? "default" : "secondary"}
+                className={`text-xs ${onTagClick ? 'cursor-pointer transition-colors hover:bg-primary/90' : ''}`}
+                onClick={(e) => {
+                  if (onTagClick) {
+                    e.preventDefault()
+                    onTagClick(tag)
+                  }
+                }}
+              >
+                {tag}
+              </Badge>
+            )
+          })}
           {project.tags.length > 3 && (
             <Badge variant="secondary" className="text-xs">
               +{project.tags.length - 3}
