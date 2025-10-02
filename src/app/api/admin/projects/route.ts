@@ -12,7 +12,7 @@ export async function GET() {
 
     const { data: projects, error } = await supabaseAdmin
       .from('Project')
-      .select('id, title, slug, category, isPublished, viewCount, createdAt')
+      .select('id, title, slug, category, isPublished, isFeatured, viewCount, createdAt')
       .order('createdAt', { ascending: false })
 
     if (error) throw error

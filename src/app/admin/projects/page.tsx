@@ -22,7 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Plus, MoreHorizontal, Edit, Trash2, Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Plus, MoreHorizontal, Edit, Trash2, Eye, EyeOff, Loader2, Star } from 'lucide-react'
 import { categoryLabels } from '@/config/site'
 
 interface Project {
@@ -31,6 +31,7 @@ interface Project {
   slug: string
   category: string
   isPublished: boolean
+  isFeatured: boolean
   viewCount: number
   createdAt: string
 }
@@ -69,6 +70,19 @@ export default function AdminProjectsPage() {
       fetchProjects()
     } catch (error) {
       console.error('Error toggling publish:', error)
+    }
+  }
+
+  async function toggleFeatured(projectId: string, isFeatured: boolean) {
+    try {
+      await fetch(`/api/admin/projects/${projectId}/feature`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isFeatured: !isFeatured }),
+      })
+      fetchProjects()
+    } catch (error) {
+      console.error('Error toggling featured:', error)
     }
   }
 
@@ -123,6 +137,7 @@ export default function AdminProjectsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Title</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Views</TableHead>
@@ -134,6 +149,23 @@ export default function AdminProjectsPage() {
                 {projects.map((project) => (
                   <TableRow key={project.id}>
                     <TableCell className="font-medium">{project.title}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => toggleFeatured(project.id, project.isFeatured)}
+                        title={project.isFeatured ? 'Remove from featured' : 'Add to featured'}
+                      >
+                        <Star
+                          className={`h-4 w-4 ${
+                            project.isFeatured
+                              ? 'fill-yellow-400 text-yellow-400'
+                              : 'text-gray-300'
+                          }`}
+                        />
+                      </Button>
+                    </TableCell>
                     <TableCell>
                       <Badge variant="outline">
                         {categoryLabels[project.category as keyof typeof categoryLabels]}

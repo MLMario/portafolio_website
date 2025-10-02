@@ -35,6 +35,7 @@ model Project {
   markdownContent String    @db.Text // Cached markdown content for chat
   imageUrls       String[]  // Array of Supabase Storage URLs for charts/figures
   isPublished     Boolean   @default(false)
+  isFeatured      Boolean   @default(false) // Featured on homepage
   publishedAt     DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -44,6 +45,7 @@ model Project {
 
   @@index([slug])
   @@index([isPublished])
+  @@index([isFeatured])
   @@index([createdAt])
   @@index([category])
 }

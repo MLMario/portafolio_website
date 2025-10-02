@@ -7,15 +7,15 @@ import { prisma } from '@/lib/prisma'
 import { categoryLabels } from '@/config/site'
 
 export async function FeaturedProjects() {
-  // Fetch featured (most recent published) projects
+  // Fetch featured projects
   const projects = await prisma.project.findMany({
     where: {
       isPublished: true,
+      isFeatured: true,
     },
     orderBy: {
       createdAt: 'desc',
     },
-    take: 6, // Show 6 featured projects
     select: {
       id: true,
       title: true,
@@ -43,9 +43,9 @@ export async function FeaturedProjects() {
 
           {/* Empty State */}
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-20 text-center">
-            <h3 className="mb-2 text-xl font-semibold">No projects yet</h3>
+            <h3 className="mb-2 text-xl font-semibold">No featured projects yet</h3>
             <p className="text-muted-foreground">
-              Projects will appear here once added through the admin dashboard
+              Mark projects as featured in the admin dashboard to display them here
             </p>
           </div>
         </div>
@@ -66,10 +66,11 @@ export async function FeaturedProjects() {
           </p>
         </div>
 
-        {/* Projects Grid */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
-            <Card key={project.id} className="flex flex-col transition-shadow hover:shadow-lg">
+        {/* Projects Horizontal Scroll */}
+        <div className="relative -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div className="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent">
+            {projects.map((project) => (
+              <Card key={project.id} className="flex min-w-[320px] max-w-[320px] flex-col transition-shadow hover:shadow-lg snap-start sm:min-w-[350px] sm:max-w-[350px]">
               {/* Thumbnail */}
               {project.thumbnail && (
                 <div className="aspect-video w-full overflow-hidden rounded-t-lg bg-muted">
@@ -120,8 +121,9 @@ export async function FeaturedProjects() {
                   </Link>
                 </Button>
               </CardFooter>
-            </Card>
-          ))}
+              </Card>
+            ))}
+          </div>
         </div>
 
         {/* View All Projects CTA */}
