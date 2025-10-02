@@ -419,9 +419,14 @@ portfolio-website/
 - [x] Create project form for add/edit with file upload support
 - [x] Implement file upload to Supabase Storage (markdown, images, thumbnails)
 - [x] Add markdown content editing via textarea
+- [x] Add file upload UI to edit project page (markdown, images, thumbnail)
+- [x] Implement title change detection and file migration logic
+- [x] Add storage helper functions (listFiles, copyFile, deleteFolder)
+- [x] Handle both FormData and JSON in PATCH API route
 - [x] Fix RLS compliance using Supabase admin client for all admin operations
 - [x] Fix database schema constraints (id, timestamps, gammaUrl nullable)
 - [x] Fix "View Live" button to use correct project slug
+- [x] Implement upsert behavior for file uploads (replace existing files)
 
 ### Phase 4: AI Chat Integration ✅ COMPLETE
 - [x] Set up Anthropic Claude API client
@@ -471,15 +476,22 @@ portfolio-website/
   - Project management table with view/edit/delete/publish actions
   - Create new projects via form with file uploads
   - Edit existing projects (title, description, category, tags, markdown, publish status)
+  - **File upload on edit page** with markdown, images, and thumbnail inputs
+  - **Smart file management**:
+    - Upload files WITHOUT changing title → Files upsert/replace in existing folder
+    - Change title WITHOUT uploading files → Existing files migrate to new slug folder
+    - Change title AND upload files → New files upload to new folder, migration happens
   - File upload to Supabase Storage (markdown files, images, thumbnails)
   - "View Live" button working correctly
   - RLS-compliant using Supabase admin client with service role key
+  - Storage utilities for file migration (listFiles, copyFile, deleteFolder)
 
 - **Database & Infrastructure**:
   - Prisma + Supabase PostgreSQL configured
   - Schema includes projects with markdown content and image URLs
   - All database constraints fixed (id auto-generation, timestamps, nullable fields)
   - `gammaUrl` marked as optional (deprecated after architecture simplification)
+  - Supabase Storage configured with upsert for file replacement
 
 ### ⚠️ Known Issues
 1. **Chat heading sizes**: Markdown headings in AI responses appear too large relative to body text. Multiple CSS fix attempts unsuccessful due to `globals.css` specificity conflicts.
@@ -488,11 +500,13 @@ portfolio-website/
 1. **Project Filtering/Search**: Projects page has no filtering or search functionality
 2. **SEO & Production**: Not deployed, no metadata optimization
 3. **Image extraction from markdown**: Manual image upload required (no automated extraction)
+4. **Cleanup of old files when title changes WITH new file uploads**: Currently leaves old folder when uploading new files during title change (may want to clean up old files that aren't being replaced)
 
 ### 🎯 Next Priority Steps
-1. **Add project filtering/search** on public projects page
-2. **Fix chat heading sizes** (ongoing issue - may need globals.css modification)
-3. **SEO optimization** and deployment to Vercel
+1. **Test file upload and migration functionality** thoroughly
+2. **Add project filtering/search** on public projects page
+3. **Fix chat heading sizes** (ongoing issue - may need globals.css modification)
+4. **SEO optimization** and deployment to Vercel
 
 ## 7. Environment Variables
 

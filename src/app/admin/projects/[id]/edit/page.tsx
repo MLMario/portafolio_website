@@ -42,6 +42,11 @@ export default function EditProjectPage({ params }: EditProjectPageProps) {
   const [isPublished, setIsPublished] = useState(false)
   const [markdownContent, setMarkdownContent] = useState('')
 
+  // File upload state
+  const [thumbnail, setThumbnail] = useState<File | null>(null)
+  const [markdownFile, setMarkdownFile] = useState<File | null>(null)
+  const [images, setImages] = useState<File[]>([])
+
   useEffect(() => {
     params.then((p) => {
       setProjectId(p.id)
@@ -85,6 +90,25 @@ export default function EditProjectPage({ params }: EditProjectPageProps) {
     setTags(tags.filter((tag) => tag !== tagToRemove))
   }
 
+  // Handle file uploads
+  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setThumbnail(e.target.files[0])
+    }
+  }
+
+  const handleMarkdownChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setMarkdownFile(e.target.files[0])
+    }
+  }
+
+  const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setImages(Array.from(e.target.files))
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -98,20 +122,54 @@ export default function EditProjectPage({ params }: EditProjectPageProps) {
         throw new Error('Description is required')
       }
 
-      const response = await fetch(`/api/admin/projects/${projectId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: title.trim(),
-          description: description.trim(),
-          category,
-          tags,
-          isPublished,
-          markdownContent,
-        }),
-      })
+      // Check if we have file uploads
+      const hasFileUploads = thumbnail || markdownFile || images.length > 0
+
+      let response
+
+      if (hasFileUploads) {
+        // Use FormData for file uploads
+        const formData = new FormData()
+        formData.append('title', title.trim())
+        formData.append('description', description.trim())
+        formData.append('category', category)
+        formData.append('tags', JSON.stringify(tags))
+        formData.append('isPublished', String(isPublished))
+        formData.append('markdownContent', markdownContent)
+
+        if (thumbnail) {
+          formData.append('thumbnail', thumbnail)
+        }
+
+        if (markdownFile) {
+          formData.append('markdown', markdownFile)
+        }
+
+        images.forEach((image, index) => {
+          formData.append(`image_${index}`, image)
+        })
+
+        response = await fetch(`/api/admin/projects/${projectId}`, {
+          method: 'PATCH',
+          body: formData,
+        })
+      } else {
+        // Use JSON for text-only updates
+        response = await fetch(`/api/admin/projects/${projectId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: title.trim(),
+            description: description.trim(),
+            category,
+            tags,
+            isPublished,
+            markdownContent,
+          }),
+        })
+      }
 
       const data = await response.json()
 
@@ -248,6 +306,68 @@ export default function EditProjectPage({ params }: EditProjectPageProps) {
 
               <Card>
                 <CardHeader>
+                  <CardTitle>File Uploads</CardTitle>
+                  <CardDescription>
+                    Upload or replace files for this project
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="markdown-file">Markdown File</Label>
+                    <Input
+                      id="markdown-file"
+                      type="file"
+                      accept=".md,.markdown,.txt"
+                      onChange={handleMarkdownChange}
+                      disabled={isSaving}
+                      className="cursor-pointer"
+                    />
+                    {markdownFile && (
+                      <span className="text-sm text-muted-foreground">
+                        {markdownFile.name}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="project-images">Project Images</Label>
+                    <Input
+                      id="project-images"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImagesChange}
+                      disabled={isSaving}
+                      className="cursor-pointer"
+                    />
+                    {images.length > 0 && (
+                      <p className="text-sm text-muted-foreground">
+                        {images.length} image(s) selected
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="thumbnail-image">Thumbnail Image</Label>
+                    <Input
+                      id="thumbnail-image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleThumbnailChange}
+                      disabled={isSaving}
+                      className="cursor-pointer"
+                    />
+                    {thumbnail && (
+                      <span className="text-sm text-muted-foreground">
+                        {thumbnail.name}
+                      </span>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
                   <CardTitle>Content</CardTitle>
                   <CardDescription>
                     Edit the markdown content directly
@@ -266,9 +386,6 @@ export default function EditProjectPage({ params }: EditProjectPageProps) {
                       required
                       disabled={isSaving}
                     />
-                    <p className="text-sm text-muted-foreground">
-                      Note: File uploads and image management coming soon
-                    </p>
                   </div>
                 </CardContent>
               </Card>
