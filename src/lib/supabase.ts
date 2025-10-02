@@ -28,9 +28,10 @@ export function getSupabaseAdmin() {
 
 // Type-safe storage helpers
 export const storage = {
-  // Upload file to Supabase Storage
+  // Upload file to Supabase Storage (uses admin client to bypass RLS)
   async uploadFile(bucket: string, path: string, file: File) {
-    const { data, error } = await supabase.storage
+    const supabaseAdmin = getSupabaseAdmin()
+    const { data, error } = await supabaseAdmin.storage
       .from(bucket)
       .upload(path, file, {
         cacheControl: '3600',
@@ -50,9 +51,10 @@ export const storage = {
     return data.publicUrl
   },
 
-  // Delete file from storage
+  // Delete file from storage (uses admin client to bypass RLS)
   async deleteFile(bucket: string, path: string) {
-    const { error } = await supabase.storage
+    const supabaseAdmin = getSupabaseAdmin()
+    const { error } = await supabaseAdmin.storage
       .from(bucket)
       .remove([path])
 

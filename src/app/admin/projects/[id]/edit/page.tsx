@@ -34,6 +34,7 @@ export default function EditProjectPage({ params }: EditProjectPageProps) {
 
   // Form state
   const [title, setTitle] = useState('')
+  const [slug, setSlug] = useState('')
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState<string>('other')
   const [tags, setTags] = useState<string[]>([])
@@ -59,6 +60,7 @@ export default function EditProjectPage({ params }: EditProjectPageProps) {
 
       const project = data.project
       setTitle(project.title)
+      setSlug(project.slug)
       setDescription(project.description)
       setCategory(project.category)
       setTags(project.tags || [])
@@ -321,8 +323,8 @@ export default function EditProjectPage({ params }: EditProjectPageProps) {
                   <CardTitle>Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <Button variant="outline" className="w-full" asChild>
-                    <Link href={`/projects/${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} target="_blank">
+                  <Button variant="outline" className="w-full" asChild disabled={!slug}>
+                    <Link href={slug ? `/projects/${slug}` : '#'} target="_blank">
                       View Live
                     </Link>
                   </Button>

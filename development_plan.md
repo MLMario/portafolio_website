@@ -412,14 +412,16 @@ portfolio-website/
 - [x] Implement responsive design
 - [ ] Add filtering/search functionality to projects page (not yet implemented)
 
-### Phase 3: Admin Dashboard ⚠️ PARTIALLY COMPLETE
+### Phase 3: Admin Dashboard ✅ COMPLETE
 - [x] Set up Supabase Auth for admin access
 - [x] Create admin login page (`/admin/login`)
-- [x] Build project management table (`/admin/projects`) with view, edit, delete actions
-- [ ] Create project form for add/edit (not yet implemented - currently using direct database)
-- [ ] Implement file upload to Supabase Storage (not yet implemented)
-- [ ] Add markdown editor/preview (not yet implemented)
-- [ ] Implement image extraction from markdown (not yet implemented)
+- [x] Build project management table (`/admin/projects`) with view, edit, delete, publish actions
+- [x] Create project form for add/edit with file upload support
+- [x] Implement file upload to Supabase Storage (markdown, images, thumbnails)
+- [x] Add markdown content editing via textarea
+- [x] Fix RLS compliance using Supabase admin client for all admin operations
+- [x] Fix database schema constraints (id, timestamps, gammaUrl nullable)
+- [x] Fix "View Live" button to use correct project slug
 
 ### Phase 4: AI Chat Integration ✅ COMPLETE
 - [x] Set up Anthropic Claude API client
@@ -446,7 +448,7 @@ portfolio-website/
 
 ---
 
-## Current Status Summary (Updated: 2025-10-01)
+## Current Status Summary (Updated: 2025-10-02)
 
 ### ✅ What's Working
 - **Complete public-facing website**:
@@ -454,7 +456,7 @@ portfolio-website/
   - Projects list page showing all published projects
   - Individual project pages with markdown rendering, table of contents, and AI chat widget
   - Responsive design working on desktop and mobile
-  - Network access configured for phone testing (http://10.0.0.39:3003)
+  - Network access configured for phone testing (http://10.0.0.39:3001)
 
 - **AI Chat Integration**:
   - Full-context chat with vision support (Claude Sonnet 4.5)
@@ -463,33 +465,34 @@ portfolio-website/
   - Images loaded from database imageUrls array
   - Markdown rendering in responses (code blocks, lists, bold, italic, etc.)
 
-- **Basic Admin Dashboard**:
+- **Complete Admin Dashboard**:
   - Authentication via Supabase Auth
   - Login page functional
-  - Project management table with view/edit/delete actions
-  - View count tracking
+  - Project management table with view/edit/delete/publish actions
+  - Create new projects via form with file uploads
+  - Edit existing projects (title, description, category, tags, markdown, publish status)
+  - File upload to Supabase Storage (markdown files, images, thumbnails)
+  - "View Live" button working correctly
+  - RLS-compliant using Supabase admin client with service role key
 
 - **Database & Infrastructure**:
   - Prisma + Supabase PostgreSQL configured
   - Schema includes projects with markdown content and image URLs
+  - All database constraints fixed (id auto-generation, timestamps, nullable fields)
   - `gammaUrl` marked as optional (deprecated after architecture simplification)
 
 ### ⚠️ Known Issues
 1. **Chat heading sizes**: Markdown headings in AI responses appear too large relative to body text. Multiple CSS fix attempts unsuccessful due to `globals.css` specificity conflicts.
 
 ### ❌ Not Yet Implemented
-1. **Admin Project Form**: No UI for creating/editing projects - currently using direct database manipulation
-2. **File Upload**: No Supabase Storage integration for uploading markdown files or images
-3. **Markdown Editor**: No admin interface for editing project content
-4. **Image Extraction**: No automated extraction of images from markdown
-5. **Project Filtering/Search**: Projects page has no filtering or search functionality
-6. **SEO & Production**: Not deployed, no metadata optimization
+1. **Project Filtering/Search**: Projects page has no filtering or search functionality
+2. **SEO & Production**: Not deployed, no metadata optimization
+3. **Image extraction from markdown**: Manual image upload required (no automated extraction)
 
 ### 🎯 Next Priority Steps
-1. **Fix chat heading sizes** (ongoing issue - may need globals.css modification)
-2. **Build admin project form** to enable content management without database access
-3. **Implement file upload** to Supabase Storage for markdown and images
-4. **Add project filtering/search** on public projects page
+1. **Add project filtering/search** on public projects page
+2. **Fix chat heading sizes** (ongoing issue - may need globals.css modification)
+3. **SEO optimization** and deployment to Vercel
 
 ## 7. Environment Variables
 

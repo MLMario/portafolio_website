@@ -1,27 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 import { requireAuth } from '@/lib/auth-server'
-import { storage } from '@/lib/supabase'
+import { storage, getSupabaseAdmin } from '@/lib/supabase'
+import { createId } from '@paralleldrive/cuid2'
 
 export async function GET() {
   try {
     // Verify authentication
     await requireAuth()
 
-    const projects = await prisma.project.findMany({
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        category: true,
-        isPublished: true,
-        viewCount: true,
-        createdAt: true,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    })
+    const supabaseAdmin = getSupabaseAdmin()
+
+    const { data: projects, error } = await supabaseAdmin
+      .from('Project')
+      .select('id, title, slug, category, isPublished, viewCount, createdAt')
+      .order('createdAt', { ascending: false })
+
+    if (error) throw error
 
     return NextResponse.json({ projects })
   } catch (error) {
@@ -63,10 +57,14 @@ export async function POST(req: NextRequest) {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '')
 
+    const supabaseAdmin = getSupabaseAdmin()
+
     // Check if slug already exists
-    const existingProject = await prisma.project.findUnique({
-      where: { slug },
-    })
+    const { data: existingProject } = await supabaseAdmin
+      .from('Project')
+      .select('id')
+      .eq('slug', slug)
+      .single()
 
     if (existingProject) {
       return NextResponse.json(
@@ -101,9 +99,12 @@ export async function POST(req: NextRequest) {
       imageUrls.push(imageUrl)
     }
 
-    // Create project in database
-    const project = await prisma.project.create({
-      data: {
+    // Create project in database using Supabase admin client (bypasses RLS)
+    const now = new Date().toISOString()
+    const { data: project, error } = await supabaseAdmin
+      .from('Project')
+      .insert({
+        id: createId(), // Manually generate ID since Supabase doesn't use Prisma defaults
         title,
         slug,
         description,
@@ -114,8 +115,13 @@ export async function POST(req: NextRequest) {
         markdownContent,
         imageUrls,
         isPublished: false, // Always create as draft
-      },
-    })
+        createdAt: now, // Manually set timestamp since Supabase doesn't use Prisma defaults
+        updatedAt: now, // Manually set timestamp since Supabase doesn't use Prisma defaults
+      })
+      .select()
+      .single()
+
+    if (error) throw error
 
     return NextResponse.json({ project }, { status: 201 })
   } catch (error) {

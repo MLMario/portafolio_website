@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 import { requireAuth } from '@/lib/auth-server'
+import { getSupabaseAdmin } from '@/lib/supabase'
 
 interface RouteParams {
   params: Promise<{ id: string }>
@@ -13,11 +13,15 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
     // Verify authentication
     await requireAuth()
 
-    const project = await prisma.project.findUnique({
-      where: { id },
-    })
+    const supabaseAdmin = getSupabaseAdmin()
 
-    if (!project) {
+    const { data: project, error } = await supabaseAdmin
+      .from('Project')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (error || !project) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 })
     }
 
@@ -41,6 +45,8 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     const body = await req.json()
     const { title, description, category, tags, isPublished, markdownContent } = body
 
+    const supabaseAdmin = getSupabaseAdmin()
+
     // If title is being changed, generate new slug
     let updateData: any = {
       description,
@@ -57,12 +63,12 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
         .replace(/(^-|-$)/g, '')
 
       // Check if new slug conflicts with another project
-      const existingProject = await prisma.project.findFirst({
-        where: {
-          slug: newSlug,
-          NOT: { id },
-        },
-      })
+      const { data: existingProject } = await supabaseAdmin
+        .from('Project')
+        .select('id')
+        .eq('slug', newSlug)
+        .neq('id', id)
+        .single()
 
       if (existingProject) {
         return NextResponse.json(
@@ -77,22 +83,27 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
 
     // Update publishedAt if publishing for the first time
     if (isPublished) {
-      const project = await prisma.project.findUnique({
-        where: { id },
-        select: { publishedAt: true },
-      })
+      const { data: project } = await supabaseAdmin
+        .from('Project')
+        .select('publishedAt')
+        .eq('id', id)
+        .single()
 
       if (!project?.publishedAt) {
-        updateData.publishedAt = new Date()
+        updateData.publishedAt = new Date().toISOString()
       }
     } else {
       updateData.publishedAt = null
     }
 
-    const updatedProject = await prisma.project.update({
-      where: { id },
-      data: updateData,
-    })
+    const { data: updatedProject, error } = await supabaseAdmin
+      .from('Project')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw error
 
     return NextResponse.json({ project: updatedProject })
   } catch (error) {
@@ -111,9 +122,14 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
     // Verify authentication
     await requireAuth()
 
-    await prisma.project.delete({
-      where: { id },
-    })
+    const supabaseAdmin = getSupabaseAdmin()
+
+    const { error } = await supabaseAdmin
+      .from('Project')
+      .delete()
+      .eq('id', id)
+
+    if (error) throw error
 
     return NextResponse.json({ success: true })
   } catch (error) {

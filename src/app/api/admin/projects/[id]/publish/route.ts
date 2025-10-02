@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 import { requireAuth } from '@/lib/auth-server'
+import { getSupabaseAdmin } from '@/lib/supabase'
 
 interface RouteParams {
   params: Promise<{ id: string }>
@@ -15,13 +15,19 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     // Verify authentication
     await requireAuth()
 
-    const project = await prisma.project.update({
-      where: { id },
-      data: {
+    const supabaseAdmin = getSupabaseAdmin()
+
+    const { data: project, error } = await supabaseAdmin
+      .from('Project')
+      .update({
         isPublished,
-        publishedAt: isPublished ? new Date() : null,
-      },
-    })
+        publishedAt: isPublished ? new Date().toISOString() : null,
+      })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw error
 
     return NextResponse.json({ project })
   } catch (error) {
