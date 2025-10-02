@@ -109,7 +109,7 @@ export function ChatWidget({ projectId, projectTitle, markdownContent, imageUrls
     return (
       <Button
         size="lg"
-        className="fixed bottom-6 right-6 flex items-center gap-3 rounded-full shadow-xl hover:shadow-2xl transition-all px-6 py-6 text-base font-semibold"
+        className="fixed bottom-6 right-6 flex items-center gap-3 rounded-full shadow-xl hover:shadow-2xl transition-all px-6 py-6 text-sm font-semibold"
         onClick={() => setIsOpen(true)}
       >
         <MessageSquare className="h-6 w-6" />
@@ -119,9 +119,9 @@ export function ChatWidget({ projectId, projectTitle, markdownContent, imageUrls
   }
 
   return (
-    <Card className="fixed bottom-6 right-6 z-50 w-[380px] shadow-2xl">
+    <Card className="fixed bottom-6 right-6 z-50 w-[475px] shadow-2xl">
       <CardHeader className="flex flex-row items-center justify-between border-b pb-4">
-        <CardTitle className="flex items-center gap-2 text-lg">
+        <CardTitle className="flex items-center gap-2 text-base">
           <Sparkles className="h-5 w-5 text-primary" />
           AI Assistant
         </CardTitle>
@@ -131,11 +131,11 @@ export function ChatWidget({ projectId, projectTitle, markdownContent, imageUrls
       </CardHeader>
 
       <CardContent className="p-0">
-        <ScrollArea className="h-[400px] p-4" ref={scrollRef}>
+        <ScrollArea className="h-[500px] p-4" ref={scrollRef}>
           {messages.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center text-muted-foreground">
               <MessageSquare className="mb-4 h-12 w-12 opacity-20" />
-              <p className="text-sm">
+              <p className="text-xs">
                 Ask me anything about this project!
                 <br />I can analyze charts, explain methodologies, and answer questions.
               </p>
@@ -155,13 +155,13 @@ export function ChatWidget({ projectId, projectTitle, markdownContent, imageUrls
                     }`}
                   >
                     {message.role === 'assistant' ? (
-                      <div className="prose prose-sm dark:prose-invert prose-p:my-2 prose-headings:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0 [&_h1]:!text-sm [&_h1]:!font-semibold [&_h2]:!text-sm [&_h2]:!font-semibold [&_h3]:!text-sm [&_h3]:!font-medium [&_h4]:!text-sm [&_h4]:!font-normal">
+                      <div className="prose prose-sm dark:prose-invert prose-p:my-2 prose-headings:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0 [&_h1]:!text-sm [&_h1]:!font-bold [&_h2]:!text-xs [&_h2]:!font-semibold [&_h3]:!text-xs [&_h3]:!font-medium [&_h4]:!text-xs [&_h4]:!font-normal [&_p]:!text-xs [&_li]:!text-xs [&_code]:!text-xs">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                           {message.content}
                         </ReactMarkdown>
                       </div>
                     ) : (
-                      <p className="whitespace-pre-wrap text-sm">{message.content}</p>
+                      <p className="whitespace-pre-wrap text-xs">{message.content}</p>
                     )}
                   </div>
                 </div>
@@ -170,7 +170,7 @@ export function ChatWidget({ projectId, projectTitle, markdownContent, imageUrls
                 <div className="flex justify-start">
                   <div className="flex items-center gap-2 rounded-lg bg-muted px-4 py-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span className="text-sm text-muted-foreground">Thinking...</span>
+                    <span className="text-xs text-muted-foreground">Thinking...</span>
                   </div>
                 </div>
               )}
@@ -185,7 +185,7 @@ export function ChatWidget({ projectId, projectTitle, markdownContent, imageUrls
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about this project..."
-            className="min-h-[60px] resize-none"
+            className="min-h-[75px] resize-none text-xs"
             disabled={isLoading}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {

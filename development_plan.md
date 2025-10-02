@@ -404,13 +404,18 @@ portfolio-website/
 - [x] Create folder structure (components/, lib/, types/, etc.)
 - [x] Configure environment variables (.env.local)
 
-### Phase 2: Public Interface ⚠️ PARTIALLY COMPLETE
+### Phase 2: Public Interface ✅ COMPLETE
 - [x] Build home page layout with hero, skills, featured projects, contact sections
 - [x] Create projects list page (`/projects`)
 - [x] Implement project details page with markdown rendering, TOC, and chat widget (`/projects/[slug]`)
 - [x] Add navigation and routing
 - [x] Implement responsive design
-- [ ] Add filtering/search functionality to projects page (not yet implemented)
+- [x] Add filtering/search functionality to projects page
+- [x] Implement clickable tag filtering
+- [x] Add search by title/description
+- [x] Add category dropdown filter
+- [x] Add sort options (newest, oldest, alphabetical, views)
+- [x] Add active filters display with clear functionality
 
 ### Phase 3: Admin Dashboard ✅ COMPLETE
 - [x] Set up Supabase Auth for admin access
@@ -438,8 +443,9 @@ portfolio-website/
 - [x] Verify prompt caching works (ephemeral cache control)
 - [x] Add markdown rendering in chat responses (ReactMarkdown with remarkGfm)
 - [x] Updated to Claude Sonnet 4.5 model (claude-sonnet-4-5-20250929)
-
-**Known Issue**: Markdown headings in chat responses still appear too large despite multiple fix attempts.
+- [x] Fix heading size hierarchy (H1 vs H2 differentiation)
+- [x] Optimize chat widget sizing (25% larger dimensions)
+- [x] Optimize font sizes for better information density (-2px across all elements)
 
 ### Phase 5: Polish & Deploy ⏳ NOT STARTED
 - [ ] Add loading states and error handling
@@ -459,6 +465,14 @@ portfolio-website/
 - **Complete public-facing website**:
   - Home page with hero, skills, featured projects (6 most recent), contact
   - Projects list page showing all published projects
+  - **Full filtering and search functionality**:
+    - Search by title, description, or tags
+    - Filter by category (dropdown)
+    - Filter by tags (clickable tags on cards)
+    - Sort by newest, oldest, alphabetical, or views
+    - Active filters display with individual remove buttons
+    - "Clear all" filters button
+    - Real-time results count
   - Individual project pages with markdown rendering, table of contents, and AI chat widget
   - Responsive design working on desktop and mobile
   - Network access configured for phone testing (http://10.0.0.39:3001)
@@ -469,6 +483,9 @@ portfolio-website/
   - Prompt caching for cost optimization
   - Images loaded from database imageUrls array
   - Markdown rendering in responses (code blocks, lists, bold, italic, etc.)
+  - Optimized chat widget (475px width, 500px height)
+  - Proper heading hierarchy (H1: 14px bold, H2: 12px semibold)
+  - Compact font sizes (12px body text) for better information density
 
 - **Complete Admin Dashboard**:
   - Authentication via Supabase Auth
@@ -494,19 +511,16 @@ portfolio-website/
   - Supabase Storage configured with upsert for file replacement
 
 ### ⚠️ Known Issues
-1. **Chat heading sizes**: Markdown headings in AI responses appear too large relative to body text. Multiple CSS fix attempts unsuccessful due to `globals.css` specificity conflicts.
+1. **Cleanup of old files when title changes WITH new file uploads**: Currently leaves old folder when uploading new files during title change (may want to clean up old files that aren't being replaced)
 
 ### ❌ Not Yet Implemented
-1. **Project Filtering/Search**: Projects page has no filtering or search functionality
-2. **SEO & Production**: Not deployed, no metadata optimization
-3. **Image extraction from markdown**: Manual image upload required (no automated extraction)
-4. **Cleanup of old files when title changes WITH new file uploads**: Currently leaves old folder when uploading new files during title change (may want to clean up old files that aren't being replaced)
+1. **SEO & Production**: Not deployed, no metadata optimization
+2. **Image extraction from markdown**: Manual image upload required (no automated extraction)
 
 ### 🎯 Next Priority Steps
-1. **Test file upload and migration functionality** thoroughly
-2. **Add project filtering/search** on public projects page
-3. **Fix chat heading sizes** (ongoing issue - may need globals.css modification)
-4. **SEO optimization** and deployment to Vercel
+1. **SEO optimization** (metadata, sitemap, structured data)
+2. **Deploy to Vercel** (production deployment)
+3. **Performance optimization** (image optimization, code splitting)
 
 ## 7. Environment Variables
 
