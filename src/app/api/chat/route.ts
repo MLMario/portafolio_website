@@ -50,9 +50,11 @@ export async function POST(req: NextRequest) {
 
     const validImages = imageContent.filter((img): img is NonNullable<typeof img> => img !== null)
 
-    // Build system message with project context (cached)
-    // For now, use text-only system message to ensure compatibility
-    const systemMessage = `You are an AI assistant helping users understand a data science project titled "${projectTitle}".
+    // Build system message with project context and images (for vision support)
+    const systemContent: any[] = [
+      {
+        type: 'text',
+        text: `You are an AI assistant helping users understand a data science project titled "${projectTitle}".
 
 Here is the full project documentation in markdown format:
 
@@ -62,12 +64,20 @@ The project includes ${validImages.length} visualization(s) and charts that supp
 
 Your role is to:
 - Answer questions about the project's methodology, findings, and implementation
-- Explain charts, figures, and visualizations when asked (describe what they likely show based on context)
+- Explain charts, figures, and visualizations when asked (you can see the actual images below)
 - Provide insights into the data analysis techniques used
 - Help users understand complex concepts in simple terms
 - Reference specific sections of the documentation when relevant
 
-Answer in less than 300 words unless user is asking for a detailed explanation or implying that it needs more information. If you're not sure about something, say so.`
+Answer in less than 300 words unless user is asking for a detailed explanation or implying that it needs more information. If you're not sure about something, say so.`,
+        cache_control: { type: 'ephemeral' as const },
+      },
+      // Add all images to the system message
+      ...validImages.map((img) => ({
+        ...img,
+        cache_control: { type: 'ephemeral' as const },
+      })),
+    ]
 
     // Convert chat messages to Anthropic format
     const anthropicMessages: MessageParam[] = messages.map((msg) => ({
@@ -79,7 +89,7 @@ Answer in less than 300 words unless user is asking for a detailed explanation o
     const stream = await anthropic.messages.stream({
       model: 'claude-sonnet-4-5-20250929',
       max_tokens: 4096,
-      system: systemMessage,
+      system: systemContent,
       messages: anthropicMessages,
     })
 
