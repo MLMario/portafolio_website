@@ -67,7 +67,7 @@ Your role is to:
 - Help users understand complex concepts in simple terms
 - Reference specific sections of the documentation when relevant
 
-Be concise, accurate, and helpful. If you're not sure about something, say so.`
+Answer in less than 300 words unless user is asking for a detailed explanation or implying that it needs more information. If you're not sure about something, say so.`
 
     // Convert chat messages to Anthropic format
     const anthropicMessages: MessageParam[] = messages.map((msg) => ({
