@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { MessageSquare, Send, Loader2, X, Sparkles } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -152,7 +154,15 @@ export function ChatWidget({ projectId, projectTitle, markdownContent, imageUrls
                         : 'bg-muted'
                     }`}
                   >
-                    <p className="whitespace-pre-wrap text-sm">{message.content}</p>
+                    {message.role === 'assistant' ? (
+                      <div className="prose prose-sm dark:prose-invert prose-p:my-2 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 prose-li:my-0">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {message.content}
+                        </ReactMarkdown>
+                      </div>
+                    ) : (
+                      <p className="whitespace-pre-wrap text-sm">{message.content}</p>
+                    )}
                   </div>
                 </div>
               ))}
