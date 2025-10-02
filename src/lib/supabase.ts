@@ -1,21 +1,30 @@
+import { createBrowserClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
 
 // Get environment variables with fallback
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
-// Supabase client for browser/client-side usage
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Supabase client for browser/client-side usage with cookie-based auth
+export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey)
 
 // Supabase admin client for server-side usage (has elevated permissions)
 // Use this for admin operations like bypassing RLS policies
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-})
+// IMPORTANT: Only use in server-side code (API routes, server components)
+export function getSupabaseAdmin() {
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseServiceKey) {
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set')
+  }
+
+  return createClient(supabaseUrl, supabaseServiceKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  })
+}
 
 // Type-safe storage helpers
 export const storage = {

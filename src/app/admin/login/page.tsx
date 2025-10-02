@@ -21,11 +21,15 @@ export default function AdminLoginPage() {
     setError(null)
     setIsLoading(true)
 
+    console.log('Attempting sign in with:', email)
+
     try {
-      await signIn(email, password)
+      const result = await signIn(email, password)
+      console.log('Sign in successful:', result)
       router.push('/admin/projects')
       router.refresh()
     } catch (err: any) {
+      console.error('Sign in error:', err)
       setError(err.message || 'Failed to sign in')
     } finally {
       setIsLoading(false)

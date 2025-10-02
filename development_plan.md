@@ -392,47 +392,49 @@ portfolio-website/
 
 ## 6. Development Phases
 
-### Phase 1: Foundation (Week 1)
+### Phase 1: Foundation ✅ COMPLETE
 - [x] Initialize Next.js project with TypeScript
-- [x] Set up Tailwind CSS and shadcn/ui
+- [x] Set up Tailwind CSS v4 and shadcn/ui
 - [x] Install core dependencies (@anthropic-ai/sdk, @prisma/client, @supabase/supabase-js, react-markdown, etc.)
-- [ ] Install additional dependencies (remark-gfm for GitHub Flavored Markdown)
-- [ ] Set up Supabase project (database + storage + auth)
-- [ ] Configure Prisma with Supabase PostgreSQL
-- [ ] Create database schema and run migrations
-- [ ] Set up Supabase Storage buckets (projects, images, thumbnails)
-- [ ] Create folder structure (components/, lib/, types/, etc.)
-- [ ] Configure environment variables (.env.local)
+- [x] Install additional dependencies (remark-gfm, remark-math, rehype-katex, @tailwindcss/typography)
+- [x] Set up Supabase project (database + storage + auth)
+- [x] Configure Prisma with Supabase PostgreSQL
+- [x] Create database schema and run migrations
+- [x] Set up Supabase Storage buckets (projects bucket)
+- [x] Create folder structure (components/, lib/, types/, etc.)
+- [x] Configure environment variables (.env.local)
 
-### Phase 2: Public Interface (Week 2)
-- [ ] Build home page layout
-- [ ] Create projects list page with filtering
-- [ ] Implement project summary page (Gamma embed)
-- [ ] Implement project details page (Markdown rendering)
-- [ ] Add navigation and routing
-- [ ] Implement responsive design
+### Phase 2: Public Interface ⚠️ PARTIALLY COMPLETE
+- [x] Build home page layout with hero, skills, featured projects, contact sections
+- [x] Create projects list page (`/projects`)
+- [x] Implement project details page with markdown rendering, TOC, and chat widget (`/projects/[slug]`)
+- [x] Add navigation and routing
+- [x] Implement responsive design
+- [ ] Add filtering/search functionality to projects page (not yet implemented)
 
-### Phase 3: Admin Dashboard (Week 3)
-- [ ] Set up Supabase Auth for admin access
-- [ ] Create admin login page
-- [ ] Build project management table
-- [ ] Create project form (add/edit)
-- [ ] Implement file upload to Supabase Storage (markdown + images)
-- [ ] Add markdown editor/preview
-- [ ] Implement image extraction from markdown
-- [ ] Test CRUD operations with file storage
+### Phase 3: Admin Dashboard ⚠️ PARTIALLY COMPLETE
+- [x] Set up Supabase Auth for admin access
+- [x] Create admin login page (`/admin/login`)
+- [x] Build project management table (`/admin/projects`) with view, edit, delete actions
+- [ ] Create project form for add/edit (not yet implemented - currently using direct database)
+- [ ] Implement file upload to Supabase Storage (not yet implemented)
+- [ ] Add markdown editor/preview (not yet implemented)
+- [ ] Implement image extraction from markdown (not yet implemented)
 
-### Phase 4: AI Chat Integration (Week 4)
-- [ ] Set up Anthropic Claude API client
-- [ ] Implement image extraction and loading from Supabase
-- [ ] Create chat API endpoint with streaming + prompt caching
-- [ ] Build chat UI components
-- [ ] Implement full-context chat with vision
-- [ ] Add suggested questions generation
-- [ ] Test chat with sample projects (text + images)
-- [ ] Verify prompt caching reduces costs
+### Phase 4: AI Chat Integration ✅ COMPLETE
+- [x] Set up Anthropic Claude API client
+- [x] Implement image loading from database (imageUrls array)
+- [x] Create chat API endpoint (`/api/chat`) with streaming and prompt caching
+- [x] Build chat UI components (ChatWidget, ChatMessage, ChatInput)
+- [x] Implement full-context chat with vision support
+- [x] Test chat with projects (markdown + images)
+- [x] Verify prompt caching works (ephemeral cache control)
+- [x] Add markdown rendering in chat responses (ReactMarkdown with remarkGfm)
+- [x] Updated to Claude Sonnet 4.5 model (claude-sonnet-4-5-20250929)
 
-### Phase 5: Polish & Deploy (Week 5)
+**Known Issue**: Markdown headings in chat responses still appear too large despite multiple fix attempts.
+
+### Phase 5: Polish & Deploy ⏳ NOT STARTED
 - [ ] Add loading states and error handling
 - [ ] Implement SEO optimization (metadata, sitemap)
 - [ ] Add analytics (optional)
@@ -441,6 +443,53 @@ portfolio-website/
 - [ ] Write documentation
 - [ ] Deploy to Vercel
 - [ ] Test in production
+
+---
+
+## Current Status Summary (Updated: 2025-10-01)
+
+### ✅ What's Working
+- **Complete public-facing website**:
+  - Home page with hero, skills, featured projects (6 most recent), contact
+  - Projects list page showing all published projects
+  - Individual project pages with markdown rendering, table of contents, and AI chat widget
+  - Responsive design working on desktop and mobile
+  - Network access configured for phone testing (http://10.0.0.39:3003)
+
+- **AI Chat Integration**:
+  - Full-context chat with vision support (Claude Sonnet 4.5)
+  - Streaming responses
+  - Prompt caching for cost optimization
+  - Images loaded from database imageUrls array
+  - Markdown rendering in responses (code blocks, lists, bold, italic, etc.)
+
+- **Basic Admin Dashboard**:
+  - Authentication via Supabase Auth
+  - Login page functional
+  - Project management table with view/edit/delete actions
+  - View count tracking
+
+- **Database & Infrastructure**:
+  - Prisma + Supabase PostgreSQL configured
+  - Schema includes projects with markdown content and image URLs
+  - `gammaUrl` marked as optional (deprecated after architecture simplification)
+
+### ⚠️ Known Issues
+1. **Chat heading sizes**: Markdown headings in AI responses appear too large relative to body text. Multiple CSS fix attempts unsuccessful due to `globals.css` specificity conflicts.
+
+### ❌ Not Yet Implemented
+1. **Admin Project Form**: No UI for creating/editing projects - currently using direct database manipulation
+2. **File Upload**: No Supabase Storage integration for uploading markdown files or images
+3. **Markdown Editor**: No admin interface for editing project content
+4. **Image Extraction**: No automated extraction of images from markdown
+5. **Project Filtering/Search**: Projects page has no filtering or search functionality
+6. **SEO & Production**: Not deployed, no metadata optimization
+
+### 🎯 Next Priority Steps
+1. **Fix chat heading sizes** (ongoing issue - may need globals.css modification)
+2. **Build admin project form** to enable content management without database access
+3. **Implement file upload** to Supabase Storage for markdown and images
+4. **Add project filtering/search** on public projects page
 
 ## 7. Environment Variables
 
