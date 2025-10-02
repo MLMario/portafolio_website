@@ -30,7 +30,7 @@ model Project {
   thumbnail       String?   // Supabase Storage URL
   tags            String[]
   category        String    @default("other") // Required: article, analysis, tutorial, software_implementation, other
-  gammaUrl        String    // Gamma presentation embed URL
+  gammaUrl        String?   // Optional: Gamma presentation embed URL (deprecated)
   markdownFileUrl String    // Supabase Storage URL
   markdownContent String    @db.Text // Cached markdown content for chat
   imageUrls       String[]  // Array of Supabase Storage URLs for charts/figures

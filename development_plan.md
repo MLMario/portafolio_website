@@ -13,7 +13,6 @@ A modern, full-stack portfolio website for showcasing Data Science projects with
 - **UI Components**: shadcn/ui (New York style)
 - **State Management**: React Context API + Zustand (for complex state, install as needed)
 - **Markdown Rendering**: react-markdown + remark-gfm + remark-math + rehype-katex
-- **Presentation Embedding**: iframe for Gamma presentations
 
 ### Backend
 - **Framework**: Next.js API Routes (serverless functions)
@@ -46,8 +45,8 @@ A modern, full-stack portfolio website for showcasing Data Science projects with
 │  Public Pages          │  Admin Dashboard  │  AI Chat        │
 │  - Home/Portfolio      │  - Login          │  - Chat UI      │
 │  - Project List        │  - Project CRUD   │  - Vision       │
-│  - Project Summary     │  - File Upload    │  - Streaming    │
-│  - Project Details     │  - Preview        │                 │
+│  - Project Details     │  - File Upload    │  - Streaming    │
+│                        │  - Preview        │                 │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -88,7 +87,7 @@ model Project {
   thumbnail       String?   // Supabase Storage URL
   tags            String[]
   category        String?
-  gammaUrl        String    // Gamma presentation embed URL
+  gammaUrl        String?   // Optional: Deprecated (was for Gamma presentations)
   markdownFileUrl String    // Supabase Storage URL
   markdownContent String    @db.Text // Cached markdown content for chat
   imageUrls       String[]  // Array of Supabase Storage URLs for charts/figures
@@ -132,21 +131,19 @@ model ChatSession {
 - Sort options (date, views, alphabetical)
 - Project cards showing: thumbnail, title, description, tags
 
-#### Project Summary Page (`/projects/[slug]`)
-- Embedded Gamma presentation (full-screen capable)
-- Project metadata (title, description, tags, date)
-- Navigation buttons: "View Detailed Analysis" → markdown page
-- Share buttons
-
-#### Project Details Page (`/projects/[slug]/details`)
+#### Project Page (`/projects/[slug]`)
+- **Direct access to markdown content** (no intermediate Gamma page)
+- Project header with metadata (title, description, tags, date, views)
 - Rendered markdown content with:
   - Syntax highlighting (for code blocks)
   - Math equation support (KaTeX)
   - Image/chart rendering
   - Table formatting
-- AI Chat widget (sticky sidebar or bottom-right)
-- Table of contents (generated from headings)
-- Navigation: Back to summary, Next/Previous project
+- Table of contents sidebar (generated from headings)
+- AI Chat widget (bottom-right floating widget)
+- Navigation: Back to all projects
+
+**Note:** Gamma presentation integration removed for simpler architecture. Projects now go directly to detailed markdown content.
 
 ### 4.2 Admin Dashboard
 
@@ -167,7 +164,7 @@ model ChatSession {
   - Tags (multi-select or chip input)
   - Category (dropdown)
   - Thumbnail upload (to Supabase Storage)
-  - Gamma presentation URL
+  - ~~Gamma presentation URL~~ (deprecated - not needed)
   - Markdown file upload (to Supabase Storage)
   - Project images/charts upload (to Supabase Storage)
 - Live preview panel
@@ -307,9 +304,7 @@ portfolio-website/
 │   │   │   ├── projects/
 │   │   │   │   ├── page.tsx             # Projects list
 │   │   │   │   └── [slug]/
-│   │   │   │       ├── page.tsx         # Project summary (Gamma)
-│   │   │   │       └── details/
-│   │   │   │           └── page.tsx     # Project details (Markdown)
+│   │   │   │       └── page.tsx         # Project details (Markdown + TOC + Chat)
 │   │   │   ├── about/
 │   │   │   │   └── page.tsx
 │   │   │   └── contact/
