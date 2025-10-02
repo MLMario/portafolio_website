@@ -19,8 +19,8 @@ export function TableOfContents({ content }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>('')
 
   useEffect(() => {
-    // Extract headings from markdown
-    const headingRegex = /^(#{1,3})\s+(.+)$/gm
+    // Extract ONLY H1 and H2 headings from markdown (# and ##)
+    const headingRegex = /^(#{1,2})\s+(.+)$/gm
     const matches = Array.from(content.matchAll(headingRegex))
 
     const extractedHeadings: Heading[] = matches.map((match, index) => {
