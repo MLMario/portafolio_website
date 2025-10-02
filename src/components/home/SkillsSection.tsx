@@ -12,7 +12,7 @@ const skillIcons = {
 export function SkillsSection() {
   return (
     <section id="skills" className="container py-20">
-      <div className="mx-auto max-w-6xl">
+      <div className="w-full max-w-6xl mx-auto">
         {/* Section Header */}
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
