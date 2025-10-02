@@ -1,3 +1,4 @@
+import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
@@ -5,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { ArrowLeft, Calendar, Eye } from 'lucide-react'
-import { categoryLabels } from '@/config/site'
+import { categoryLabels, siteConfig } from '@/config/site'
 import { MarkdownRenderer } from '@/components/markdown/MarkdownRenderer'
 import { TableOfContents } from '@/components/markdown/TableOfContents'
 import { ChatWidget } from '@/components/chat/ChatWidget'
@@ -15,11 +16,18 @@ interface ProjectPageProps {
   params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata({ params }: ProjectPageProps) {
+export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
   const { slug } = await params
   const project = await prisma.project.findUnique({
     where: { slug },
-    select: { title: true, description: true },
+    select: {
+      title: true,
+      description: true,
+      thumbnail: true,
+      tags: true,
+      category: true,
+      createdAt: true,
+    },
   })
 
   if (!project) {
@@ -28,9 +36,40 @@ export async function generateMetadata({ params }: ProjectPageProps) {
     }
   }
 
+  const projectUrl = `${siteConfig.url}/projects/${slug}`
+  const imageUrl = project.thumbnail || '/og-image.png'
+
   return {
     title: project.title,
     description: project.description,
+    keywords: [...project.tags, 'data science', 'analytics', categoryLabels[project.category as keyof typeof categoryLabels]],
+    openGraph: {
+      title: project.title,
+      description: project.description,
+      url: projectUrl,
+      type: 'article',
+      publishedTime: project.createdAt.toISOString(),
+      authors: [siteConfig.author.name],
+      tags: project.tags,
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: project.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: project.title,
+      description: project.description,
+      images: [imageUrl],
+      creator: '@mariogj87',
+    },
+    alternates: {
+      canonical: projectUrl,
+    },
   }
 }
 
@@ -57,8 +96,37 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     day: 'numeric',
   }).format(new Date(project.createdAt))
 
+  // JSON-LD structured data
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: project.title,
+    description: project.description,
+    image: project.thumbnail || `${siteConfig.url}/og-image.png`,
+    datePublished: project.createdAt.toISOString(),
+    dateModified: project.updatedAt.toISOString(),
+    author: {
+      '@type': 'Person',
+      name: siteConfig.author.name,
+      url: siteConfig.links.linkedin,
+    },
+    publisher: {
+      '@type': 'Person',
+      name: siteConfig.author.name,
+      url: siteConfig.url,
+    },
+    keywords: project.tags.join(', '),
+    articleSection: categoryLabels[project.category as keyof typeof categoryLabels],
+  }
+
   return (
     <div className="min-h-screen">
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/* Header */}
       <div className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur">
         <div className="container flex h-16 items-center justify-between">

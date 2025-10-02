@@ -1,10 +1,21 @@
+import { Metadata } from 'next'
 import { Suspense } from 'react'
 import { ProjectsList } from '@/components/projects/ProjectsList'
 import { ProjectsFilter } from '@/components/projects/ProjectsFilter'
+import { siteConfig } from '@/config/site'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Projects',
-  description: 'Explore my data science projects, analyses, and technical implementations',
+  description: 'Explore my data science projects, analyses, and technical implementations. Browse through portfolio of causal inference, forecasting, and analytics work.',
+  openGraph: {
+    title: 'Projects | Mario Garcia',
+    description: 'Explore data science projects, analyses, and technical implementations',
+    url: `${siteConfig.url}/projects`,
+    type: 'website',
+  },
+  alternates: {
+    canonical: `${siteConfig.url}/projects`,
+  },
 }
 
 export default function ProjectsPage() {

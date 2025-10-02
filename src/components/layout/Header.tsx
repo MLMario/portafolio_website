@@ -12,7 +12,7 @@ export function Header() {
   const navigation = [
     { name: 'Home', href: '/' },
     { name: 'Projects', href: '/projects' },
-    { name: 'About', href: '/#about' },
+    { name: 'About', href: 'https://www.linkedin.com/in/magj87/' },
     { name: 'Contact', href: '/#contact' },
   ]
 
@@ -30,6 +30,8 @@ export function Header() {
             <Link
               key={item.href}
               href={item.href}
+              target={item.href.startsWith('http') ? '_blank' : undefined}
+              rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
               className={`text-sm font-medium transition-colors hover:text-primary ${
                 pathname === item.href
                   ? 'text-foreground'

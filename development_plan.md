@@ -463,7 +463,8 @@ portfolio-website/
 
 ### ✅ What's Working
 - **Complete public-facing website**:
-  - Home page with hero, skills, featured projects (6 most recent), contact
+  - Home page with hero section featuring circular portrait image, skills, featured projects (6 most recent), contact
+  - About menu in header redirects to LinkedIn profile (https://www.linkedin.com/in/magj87/)
   - Projects list page showing all published projects
   - **Full filtering and search functionality**:
     - Search by title, description, or tags
@@ -512,6 +513,7 @@ portfolio-website/
 
 ### ⚠️ Known Issues
 1. **Cleanup of old files when title changes WITH new file uploads**: Currently leaves old folder when uploading new files during title change (may want to clean up old files that aren't being replaced)
+2. **Portrait image required**: Homepage hero section expects `self_portrait.png` in `/public` directory for circular profile picture
 
 ### ❌ Not Yet Implemented
 1. **SEO & Production**: Not deployed, no metadata optimization

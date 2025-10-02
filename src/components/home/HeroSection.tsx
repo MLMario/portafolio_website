@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { siteConfig } from '@/config/site'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Mail } from 'lucide-react'
@@ -7,6 +8,19 @@ export function HeroSection() {
   return (
     <section className="container flex min-h-[calc(100vh-4rem)] items-center justify-center py-20">
       <div className="w-full max-w-4xl text-center">
+        {/* Portrait Image - Circular */}
+        <div className="mb-8 flex justify-center">
+          <div className="relative h-48 w-48 overflow-hidden rounded-full border-4 border-primary/20 shadow-lg">
+            <Image
+              src="/self_portrait.png"
+              alt="Mario Garcia"
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        </div>
+
         {/* Greeting */}
         <p className="mb-4 text-sm font-medium text-muted-foreground">
           Hello, I'm
