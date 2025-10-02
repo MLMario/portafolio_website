@@ -8,6 +8,7 @@ import { ArrowLeft, Presentation, Calendar, Eye } from 'lucide-react'
 import { categoryLabels } from '@/config/site'
 import { MarkdownRenderer } from '@/components/markdown/MarkdownRenderer'
 import { TableOfContents } from '@/components/markdown/TableOfContents'
+import { ChatWidget } from '@/components/chat/ChatWidget'
 import 'katex/dist/katex.min.css'
 
 interface ProjectDetailsPageProps {
@@ -126,6 +127,14 @@ export default async function ProjectDetailsPage({ params }: ProjectDetailsPageP
           </aside>
         </div>
       </div>
+
+      {/* AI Chat Widget */}
+      <ChatWidget
+        projectId={project.id}
+        projectTitle={project.title}
+        markdownContent={project.markdownContent}
+        imageUrls={project.imageUrls}
+      />
     </div>
   )
 }
