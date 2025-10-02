@@ -155,7 +155,7 @@ export function ChatWidget({ projectId, projectTitle, markdownContent, imageUrls
                     }`}
                   >
                     {message.role === 'assistant' ? (
-                      <div className="prose prose-sm dark:prose-invert prose-p:my-2 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 prose-li:my-0 prose-h1:text-base prose-h1:font-semibold prose-h2:text-sm prose-h2:font-semibold prose-h3:text-sm prose-h3:font-medium prose-h4:text-sm prose-h4:font-medium">
+                      <div className="prose prose-sm dark:prose-invert prose-p:my-2 prose-headings:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0 prose-h1:text-sm prose-h1:font-semibold prose-h2:text-sm prose-h2:font-semibold prose-h3:text-sm prose-h3:font-medium prose-h4:text-sm prose-h4:font-normal">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                           {message.content}
                         </ReactMarkdown>
