@@ -50,11 +50,8 @@ export async function POST(req: NextRequest) {
 
     const validImages = imageContent.filter((img): img is NonNullable<typeof img> => img !== null)
 
-    // Build system message with project context and images (for vision support)
-    const systemContent: any[] = [
-      {
-        type: 'text',
-        text: `You are an AI assistant helping users understand a data science project titled "${projectTitle}".
+    // Build system message with project context (text only - images in first user message)
+    const systemMessage = `You are an AI assistant helping users understand a data science project titled "${projectTitle}".
 
 Here is the full project documentation in markdown format:
 
@@ -64,32 +61,55 @@ The project includes ${validImages.length} visualization(s) and charts that supp
 
 Your role is to:
 - Answer questions about the project's methodology, findings, and implementation
-- Explain charts, figures, and visualizations when asked (you can see the actual images below)
+- Explain charts, figures, and visualizations when asked (you can see the actual images provided to you)
 - Provide insights into the data analysis techniques used
 - Help users understand complex concepts in simple terms
 - Reference specific sections of the documentation when relevant
 
-Answer in less than 300 words unless user is asking for a detailed explanation or implying that it needs more information. If you're not sure about something, say so.`,
-        cache_control: { type: 'ephemeral' as const },
-      },
-      // Add all images to the system message
-      ...validImages.map((img) => ({
-        ...img,
-        cache_control: { type: 'ephemeral' as const },
-      })),
-    ]
+Answer in less than 300 words unless user is asking for a detailed explanation or implying that it needs more information. If you're not sure about something, say so.`
 
-    // Convert chat messages to Anthropic format
-    const anthropicMessages: MessageParam[] = messages.map((msg) => ({
-      role: msg.role,
-      content: msg.content,
-    }))
+    // Add images to the first user message for vision support
+    const firstMessage = messages[0]
+    const anthropicMessages: MessageParam[] = []
+
+    if (firstMessage && validImages.length > 0) {
+      // First message with images and text
+      anthropicMessages.push({
+        role: 'user',
+        content: [
+          ...validImages.map((img) => ({
+            type: 'image' as const,
+            source: img.source,
+          })),
+          {
+            type: 'text' as const,
+            text: firstMessage.content,
+          },
+        ],
+      })
+
+      // Add remaining messages
+      messages.slice(1).forEach((msg) => {
+        anthropicMessages.push({
+          role: msg.role,
+          content: msg.content,
+        })
+      })
+    } else {
+      // No images, convert messages normally
+      messages.forEach((msg) => {
+        anthropicMessages.push({
+          role: msg.role,
+          content: msg.content,
+        })
+      })
+    }
 
     // Create streaming response
     const stream = await anthropic.messages.stream({
       model: 'claude-sonnet-4-5-20250929',
       max_tokens: 4096,
-      system: systemContent,
+      system: systemMessage,
       messages: anthropicMessages,
     })
 
