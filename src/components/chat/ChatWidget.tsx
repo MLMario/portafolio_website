@@ -107,10 +107,11 @@ export function ChatWidget({ projectId, projectTitle, markdownContent, imageUrls
     return (
       <Button
         size="lg"
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg"
+        className="fixed bottom-6 right-6 flex items-center gap-3 rounded-full shadow-xl hover:shadow-2xl transition-all px-6 py-6 text-base font-semibold"
         onClick={() => setIsOpen(true)}
       >
         <MessageSquare className="h-6 w-6" />
+        <span className="hidden sm:inline">Ask Me Anything</span>
       </Button>
     )
   }
