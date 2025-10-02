@@ -77,7 +77,7 @@ Be concise, accurate, and helpful. If you're not sure about something, say so.`
 
     // Create streaming response
     const stream = await anthropic.messages.stream({
-      model: 'claude-sonnet-4-20241022',
+      model: 'claude-sonnet-4-5-20250929',
       max_tokens: 4096,
       system: systemMessage,
       messages: anthropicMessages,
