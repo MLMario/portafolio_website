@@ -1,20 +1,50 @@
 // Site-wide configuration
 
 export const siteConfig = {
-  name: 'Data Science Portfolio',
-  description: 'Showcase of Data Science projects with interactive AI chat',
+  name: 'Mario Garcia - Data Scientist',
+  description: 'Data Science Portfolio - Advanced Analytics, Causal Inference, and Strategic Insights',
   url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
   author: {
-    name: 'Your Name', // TODO: Update with your name
-    email: 'your.email@example.com', // TODO: Update with your email
-    github: 'https://github.com/yourusername', // TODO: Update with your GitHub
-    linkedin: 'https://linkedin.com/in/yourprofile', // TODO: Update with your LinkedIn
+    name: 'Mario Garcia',
+    title: 'Data Scientist',
+    bio: 'Data Scientist with a long track record of influencing executive-level strategy by applying advanced analytics to complex digital marketplace challenges. Proven ability to merge strategic business acumen with deep technical expertise in causal inference, experimentation, and forecasting, consistently delivering data-driven insights that enhance efficiency.',
+    email: 'mariogj1987@gmail.com',
+    github: 'https://github.com/MLMario',
+    linkedin: 'https://www.linkedin.com/in/mario-garcia',
   },
   links: {
-    github: 'https://github.com/yourusername/portfolio',
-    twitter: 'https://twitter.com/yourusername',
+    github: 'https://github.com/MLMario',
+    linkedin: 'https://www.linkedin.com/in/mario-garcia',
+    email: 'mailto:mariogj1987@gmail.com',
   },
 }
+
+// Skills and expertise areas
+export const skills = {
+  'Data Science & Modeling': [
+    'Python',
+    'R',
+    'SQL',
+    'Predictive Modeling',
+    'Forecasting',
+    'Causal Inference',
+    'Pricing & Optimization',
+  ],
+  'Methodologies & Frameworks': [
+    'Causal Analysis',
+    'A/B Testing',
+    'Switchback Experiments',
+    'Difference-in-Differences',
+    'Budget Optimization',
+  ],
+  'Leadership & Strategy': [
+    'Cross-Functional Leadership',
+    'Product Strategy',
+    'Roadmapping',
+    'Executive Reporting',
+    'Dashboard Development',
+  ],
+} as const
 
 // Project category enum - these are the only allowed values
 export const projectCategories = [
