@@ -10,11 +10,11 @@ export const siteConfig = {
     bio: 'Data Scientist with a long track record of influencing executive-level strategy by applying advanced analytics to complex digital marketplace challenges. Proven ability to merge strategic business acumen with deep technical expertise in causal inference, experimentation, and forecasting, consistently delivering data-driven insights that enhance efficiency.',
     email: 'mariogj1987@gmail.com',
     github: 'https://github.com/MLMario',
-    linkedin: 'https://www.linkedin.com/in/mario-garcia',
+    linkedin: 'https://www.linkedin.com/in/magj87/',
   },
   links: {
     github: 'https://github.com/MLMario',
-    linkedin: 'https://www.linkedin.com/in/mario-garcia',
+    linkedin: 'https://www.linkedin.com/in/magj87/',
     email: 'mailto:mariogj1987@gmail.com',
   },
 }

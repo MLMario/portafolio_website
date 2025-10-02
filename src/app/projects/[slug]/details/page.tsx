@@ -113,18 +113,18 @@ export default async function ProjectDetailsPage({ params }: ProjectDetailsPageP
 
       {/* Main Content */}
       <div className="container py-12">
-        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_250px]">
-          {/* Markdown Content */}
-          <article className="min-w-0">
-            <MarkdownRenderer content={project.markdownContent} />
-          </article>
-
-          {/* Sidebar with TOC */}
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[250px_1fr]">
+          {/* Sidebar with TOC - LEFT SIDE */}
           <aside className="hidden lg:block">
             <div className="sticky top-24 space-y-4">
               <TableOfContents content={project.markdownContent} />
             </div>
           </aside>
+
+          {/* Markdown Content - RIGHT SIDE */}
+          <article className="min-w-0">
+            <MarkdownRenderer content={project.markdownContent} />
+          </article>
         </div>
       </div>
 

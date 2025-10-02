@@ -51,7 +51,8 @@ export async function POST(req: NextRequest) {
     const validImages = imageContent.filter(Boolean)
 
     // Build system message with project context (cached)
-    const systemMessage = [
+    // Create text content with cache control
+    const systemContent: any[] = [
       {
         type: 'text' as const,
         text: `You are an AI assistant helping users understand a data science project titled "${projectTitle}".
@@ -68,10 +69,20 @@ Your role is to:
 - Reference specific sections of the documentation when relevant
 
 Be concise, accurate, and helpful. If you're not sure about something, say so.`,
-        cache_control: { type: 'ephemeral' as const },
       },
-      ...validImages,
     ]
+
+    // Add images to system content if available
+    if (validImages.length > 0) {
+      systemContent.push(...validImages)
+      // Add cache control to the last item
+      systemContent[systemContent.length - 1].cache_control = { type: 'ephemeral' as const }
+    } else {
+      // Add cache control to the text content
+      systemContent[0].cache_control = { type: 'ephemeral' as const }
+    }
+
+    const systemMessage = systemContent
 
     // Convert chat messages to Anthropic format
     const anthropicMessages: MessageParam[] = messages.map((msg) => ({
