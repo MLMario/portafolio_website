@@ -48,41 +48,26 @@ export async function POST(req: NextRequest) {
       })
     )
 
-    const validImages = imageContent.filter(Boolean)
+    const validImages = imageContent.filter((img): img is NonNullable<typeof img> => img !== null)
 
     // Build system message with project context (cached)
-    // Create text content with cache control
-    const systemContent: any[] = [
-      {
-        type: 'text' as const,
-        text: `You are an AI assistant helping users understand a data science project titled "${projectTitle}".
+    // For now, use text-only system message to ensure compatibility
+    const systemMessage = `You are an AI assistant helping users understand a data science project titled "${projectTitle}".
 
 Here is the full project documentation in markdown format:
 
 ${markdownContent}
 
+The project includes ${validImages.length} visualization(s) and charts that support the analysis.
+
 Your role is to:
 - Answer questions about the project's methodology, findings, and implementation
-- Explain charts, figures, and visualizations when asked
+- Explain charts, figures, and visualizations when asked (describe what they likely show based on context)
 - Provide insights into the data analysis techniques used
 - Help users understand complex concepts in simple terms
 - Reference specific sections of the documentation when relevant
 
-Be concise, accurate, and helpful. If you're not sure about something, say so.`,
-      },
-    ]
-
-    // Add images to system content if available
-    if (validImages.length > 0) {
-      systemContent.push(...validImages)
-      // Add cache control to the last item
-      systemContent[systemContent.length - 1].cache_control = { type: 'ephemeral' as const }
-    } else {
-      // Add cache control to the text content
-      systemContent[0].cache_control = { type: 'ephemeral' as const }
-    }
-
-    const systemMessage = systemContent
+Be concise, accurate, and helpful. If you're not sure about something, say so.`
 
     // Convert chat messages to Anthropic format
     const anthropicMessages: MessageParam[] = messages.map((msg) => ({
