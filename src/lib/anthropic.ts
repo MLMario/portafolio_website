@@ -77,7 +77,7 @@ You have access to all the charts and figures in this project. Reference them wh
 
   // Create streaming response
   return anthropic.messages.stream({
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-sonnet-4-20241022',
     max_tokens: 4096,
     messages,
   })
