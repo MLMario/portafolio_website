@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx prisma generate:*)",
+      "Bash(npx prisma migrate dev:*)",
+      "Bash(dir /b .env*)",
+      "Bash(del .env)",
+      "Bash(npx dotenv -e .env.local -- prisma migrate dev:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsx:*)",
+      "Bash(NODE_OPTIONS=\"-r dotenv/config\" DOTENV_CONFIG_PATH=.env.local npx tsx scripts/verify-setup.ts)",
+      "Bash(export NODE_OPTIONS=\"-r dotenv/config\")",
+      "Bash(export DOTENV_CONFIG_PATH=.env.local)",
+      "Bash(npx prisma migrate:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

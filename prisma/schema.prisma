@@ -1,0 +1,63 @@
+// Prisma schema for Portfolio Website
+// Database: Supabase PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Admin user model for authentication
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// Project model - stores Data Science portfolio projects
+model Project {
+  id              String    @id @default(cuid())
+  title           String
+  slug            String    @unique
+  description     String
+  thumbnail       String?   // Supabase Storage URL
+  tags            String[]
+  category        String    @default("other") // Required: article, analysis, tutorial, software_implementation, other
+  gammaUrl        String    // Gamma presentation embed URL
+  markdownFileUrl String    // Supabase Storage URL
+  markdownContent String    @db.Text // Cached markdown content for chat
+  imageUrls       String[]  // Array of Supabase Storage URLs for charts/figures
+  isPublished     Boolean   @default(false)
+  publishedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  viewCount       Int       @default(0)
+
+  chatSessions    ChatSession[]
+
+  @@index([slug])
+  @@index([isPublished])
+  @@index([createdAt])
+  @@index([category])
+}
+
+// Chat session model - stores AI chat conversations per project
+model ChatSession {
+  id          String    @id @default(cuid())
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sessionId   String    @unique
+  messages    Json      // Array of {role, content, timestamp}
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([projectId])
+  @@index([sessionId])
+}
