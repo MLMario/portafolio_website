@@ -1,0 +1,43 @@
+<task> -
+1) Review <checklist_vercel_context> , add any other checklist times you might need 
+2) Based on this context, create <verci_prep_plan> in an md file
+</task> 
+
+<checklist_vercel_context>
+- Detect framework and version (e.g., Next.js 13/14 app/router).
+- Confirm package.json scripts: build, start, vercel-build if needed.
+- Node version set (engines in package.json or .nvmrc).
+- Build output directory defined or auto-detected (e.g., .next, dist, out).
+- vercel.json present if custom routes/build/output required.
+- Environment variables listed and typed (.env.example or README).
+- Root vs monorepo config: project root, workspace settings.
+- Edge/Node runtimes, middleware, and image optimization compatibility.
+- Static file locations (public/), redirects/rewrites, headers.
+- Framework-specific config: next.config.js, vite.config, tsconfig.
+- CI/CD expectations: VERCEL_ORG_ID, VERCEL_PROJECT_ID if using CLI.
+- Ignore files: .gitignore, .vercelignore as needed.
+</checklist_vercel_context>
+
+<verci_prep_plan> 
+# Current State
+- Framework:
+- Build scripts:
+- Node/runtime:
+- Env vars needed:
+- Routing/rewrites:
+- Monorepo layout:
+
+# Required Modifications
+- Issue ,why, fix
+
+#Error Logging Plan
+ - Source maps on build: <on/off and how>
+ - Runtime logging: <console | 3rd-party sdk>
+- Vercel logs: how to access and filter
+- Alerts: <simple rule and channel>
+
+#Testing Plan
+
+</verci_prep_plan> 
+
+Execute <task>

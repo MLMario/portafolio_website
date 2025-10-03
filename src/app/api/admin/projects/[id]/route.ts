@@ -58,24 +58,45 @@ async function migrateProjectFiles(
       }
     }
 
-    // Migrate images folder
+    // Migrate images (check both old /images subfolder and new root structure)
     if (currentProject.imageUrls && currentProject.imageUrls.length > 0) {
+      const newImageUrls: string[] = []
+
+      // Try old structure first (with /images subfolder)
       try {
         const imageFiles = await storage.listFiles(bucket, `projects/${oldSlug}/images`)
-        const newImageUrls: string[] = []
-
         for (const imageFile of imageFiles) {
           const oldImagePath = `projects/${oldSlug}/images/${imageFile.name}`
-          const newImagePath = `projects/${newSlug}/images/${imageFile.name}`
+          const newImagePath = `projects/${newSlug}/${imageFile.name}`
           await storage.copyFile(bucket, oldImagePath, newImagePath)
           newImageUrls.push(storage.getPublicUrl(bucket, newImagePath))
         }
+      } catch (error) {
+        console.warn('No images in /images subfolder to migrate:', error)
+      }
 
-        if (newImageUrls.length > 0) {
-          migratedUrls.imageUrls = newImageUrls
+      // Try new structure (images in root folder)
+      try {
+        const rootFiles = await storage.listFiles(bucket, `projects/${oldSlug}`)
+        // Filter out non-image files (markdown, thumbnail)
+        const imageFiles = rootFiles.filter(file =>
+          !file.name.includes('content.md') &&
+          !file.name.includes('thumbnail.') &&
+          /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(file.name)
+        )
+
+        for (const imageFile of imageFiles) {
+          const oldImagePath = `projects/${oldSlug}/${imageFile.name}`
+          const newImagePath = `projects/${newSlug}/${imageFile.name}`
+          await storage.copyFile(bucket, oldImagePath, newImagePath)
+          newImageUrls.push(storage.getPublicUrl(bucket, newImagePath))
         }
       } catch (error) {
-        console.warn('No images to migrate:', error)
+        console.warn('No images in root folder to migrate:', error)
+      }
+
+      if (newImageUrls.length > 0) {
+        migratedUrls.imageUrls = newImageUrls
       }
     }
 
@@ -279,7 +300,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
       const imageUrls: string[] = []
       for (let i = 0; i < imageFiles.length; i++) {
         const image = imageFiles[i]
-        const imagePath = `projects/${targetSlug}/images/${Date.now()}-${i}-${image.name}`
+        const imagePath = `projects/${targetSlug}/${image.name}`
         await storage.uploadFile('projects', imagePath, image)
         const imageUrl = storage.getPublicUrl('projects', imagePath)
         imageUrls.push(imageUrl)

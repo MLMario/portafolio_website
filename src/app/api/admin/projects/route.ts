@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
     const imageUrls: string[] = []
     for (let i = 0; i < imageFiles.length; i++) {
       const image = imageFiles[i]
-      const imagePath = `projects/${slug}/images/${i}-${image.name}`
+      const imagePath = `projects/${slug}/${image.name}`
       await storage.uploadFile('projects', imagePath, image)
       const imageUrl = storage.getPublicUrl('projects', imagePath)
       imageUrls.push(imageUrl)

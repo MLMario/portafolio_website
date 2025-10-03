@@ -5,7 +5,7 @@ Developing Prompt
 
 <build_process>
 - Plan any schema changes needed to implement <build_objective>
-- Plan steps to implement this build taking
+- Plan steps to implement this build
 - Plan testing steps once this build is complete
 - Execute code changes or actions needed to achieve <build_objective>
 - Do not add, commit or push git unless prompted 
