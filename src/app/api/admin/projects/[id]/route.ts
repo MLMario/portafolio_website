@@ -127,7 +127,17 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
     if (error instanceof Error && error.message === 'Unauthorized') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
     console.error('Error fetching project:', error)
+
+    // Handle Supabase errors
+    if (error && typeof error === 'object' && 'code' in error) {
+      const dbError = error as { code?: string }
+      if (dbError.code === 'PGRST116') {
+        return NextResponse.json({ error: 'Project not found' }, { status: 404 })
+      }
+    }
+
     return NextResponse.json({ error: 'Failed to fetch project' }, { status: 500 })
   }
 }
@@ -341,7 +351,39 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     if (error instanceof Error && error.message === 'Unauthorized') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
     console.error('Error updating project:', error)
+
+    // Handle validation errors
+    if (error instanceof SyntaxError) {
+      return NextResponse.json(
+        { error: 'Invalid request body' },
+        { status: 400 }
+      )
+    }
+
+    // Handle storage errors
+    if (error instanceof Error && error.message.includes('storage')) {
+      return NextResponse.json(
+        { error: 'File upload failed' },
+        { status: 500 }
+      )
+    }
+
+    // Handle Supabase errors
+    if (error && typeof error === 'object' && 'code' in error) {
+      const dbError = error as { code?: string }
+      if (dbError.code === 'PGRST116') {
+        return NextResponse.json({ error: 'Project not found' }, { status: 404 })
+      }
+      if (dbError.code === '23505') {
+        return NextResponse.json(
+          { error: 'Project with this slug already exists' },
+          { status: 409 }
+        )
+      }
+    }
+
     return NextResponse.json({ error: 'Failed to update project' }, { status: 500 })
   }
 }
@@ -367,7 +409,17 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
     if (error instanceof Error && error.message === 'Unauthorized') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
     console.error('Error deleting project:', error)
+
+    // Handle Supabase errors
+    if (error && typeof error === 'object' && 'code' in error) {
+      const dbError = error as { code?: string }
+      if (dbError.code === 'PGRST116') {
+        return NextResponse.json({ error: 'Project not found' }, { status: 404 })
+      }
+    }
+
     return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 })
   }
 }

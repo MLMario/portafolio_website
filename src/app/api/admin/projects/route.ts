@@ -38,10 +38,49 @@ export async function POST(req: NextRequest) {
     const description = formData.get('description') as string
     const category = formData.get('category') as string
     const tagsJson = formData.get('tags') as string
-    const tags = JSON.parse(tagsJson || '[]')
+
+    // Validate required fields
+    if (!title || title.trim() === '') {
+      return NextResponse.json(
+        { error: 'Title is required' },
+        { status: 400 }
+      )
+    }
+
+    if (!description || description.trim() === '') {
+      return NextResponse.json(
+        { error: 'Description is required' },
+        { status: 400 }
+      )
+    }
+
+    if (!category || category.trim() === '') {
+      return NextResponse.json(
+        { error: 'Category is required' },
+        { status: 400 }
+      )
+    }
+
+    let tags: string[] = []
+    try {
+      tags = JSON.parse(tagsJson || '[]')
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid tags format' },
+        { status: 400 }
+      )
+    }
 
     const thumbnail = formData.get('thumbnail') as File | null
     const markdownFile = formData.get('markdown') as File
+
+    if (!markdownFile) {
+      return NextResponse.json(
+        { error: 'Markdown file is required' },
+        { status: 400 }
+      )
+    }
+
     const imageFiles: File[] = []
 
     // Collect image files
@@ -128,7 +167,28 @@ export async function POST(req: NextRequest) {
     if (error instanceof Error && error.message === 'Unauthorized') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
     console.error('Error creating project:', error)
+
+    // Handle storage errors
+    if (error instanceof Error && error.message.includes('storage')) {
+      return NextResponse.json(
+        { error: 'File upload failed' },
+        { status: 500 }
+      )
+    }
+
+    // Handle database errors from Supabase
+    if (error && typeof error === 'object' && 'code' in error) {
+      const dbError = error as { code?: string; message?: string }
+      if (dbError.code === '23505') {
+        return NextResponse.json(
+          { error: 'Project with this slug already exists' },
+          { status: 409 }
+        )
+      }
+    }
+
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to create project' },
       { status: 500 }

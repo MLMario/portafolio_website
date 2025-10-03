@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import { anthropic } from '@/lib/anthropic'
 import { MessageParam } from '@anthropic-ai/sdk/resources'
+import { z } from 'zod'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -18,9 +19,38 @@ interface ChatRequestBody {
   messages: ChatMessage[]
 }
 
+// Validation schema for request body
+const chatRequestSchema = z.object({
+  projectId: z.string().min(1, 'Project ID is required'),
+  projectTitle: z.string().min(1, 'Project title is required'),
+  markdownContent: z.string().min(1, 'Markdown content is required'),
+  imageUrls: z.array(z.string().url()).default([]),
+  messages: z.array(z.object({
+    role: z.enum(['user', 'assistant']),
+    content: z.string().min(1, 'Message content is required'),
+  })).min(1, 'At least one message is required'),
+})
+
 export async function POST(req: NextRequest) {
   try {
-    const body: ChatRequestBody = await req.json()
+    // Parse and validate request body
+    const rawBody = await req.json()
+    const validationResult = chatRequestSchema.safeParse(rawBody)
+
+    if (!validationResult.success) {
+      return new Response(
+        JSON.stringify({
+          error: 'Invalid request body',
+          details: validationResult.error.errors
+        }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      )
+    }
+
+    const body: ChatRequestBody = validationResult.data
     const { projectTitle, markdownContent, imageUrls, messages } = body
 
     // Convert images to base64 if needed (for vision support)
@@ -140,9 +170,48 @@ Answer in less than 300 words unless user is asking for a detailed explanation o
     })
   } catch (error) {
     console.error('Chat API error:', error)
-    return new Response(JSON.stringify({ error: 'Failed to process chat request' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    })
+
+    // Handle specific error types
+    if (error instanceof SyntaxError) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid JSON in request body' }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      )
+    }
+
+    // Handle Anthropic API errors
+    if (error && typeof error === 'object' && 'status' in error) {
+      const apiError = error as { status?: number; message?: string }
+      if (apiError.status === 429) {
+        return new Response(
+          JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+          {
+            status: 429,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        )
+      }
+      if (apiError.status === 401) {
+        return new Response(
+          JSON.stringify({ error: 'API authentication failed' }),
+          {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' },
+          }
+        )
+      }
+    }
+
+    // Generic error response
+    return new Response(
+      JSON.stringify({ error: 'Failed to process chat request' }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    )
   }
 }
