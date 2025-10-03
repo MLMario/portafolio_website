@@ -6,6 +6,9 @@ import { ContactSection } from '@/components/home/ContactSection'
 import { Separator } from '@/components/ui/separator'
 import { siteConfig } from '@/config/site'
 
+// Force dynamic rendering to prevent build-time database queries
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Home',
   description: siteConfig.description,
