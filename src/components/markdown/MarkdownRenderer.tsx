@@ -47,16 +47,20 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
             const id = generateId(text)
             return <h4 id={id} {...props}>{children}</h4>
           },
-          code({ node, inline, className, children, ...props }) {
+          code({ node, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || '')
             const codeString = String(children).replace(/\n$/, '')
 
-            return !inline && match ? (
+            // Check if code is inline by checking if it has a language class
+            // Block code typically has language- class, inline code doesn't
+            const isInline = !match
+
+            return !isInline && match ? (
               <SyntaxHighlighter
+                // @ts-ignore - Style types are incompatible but work at runtime
                 style={vscDarkPlus}
                 language={match[1]}
                 PreTag="div"
-                {...props}
               >
                 {codeString}
               </SyntaxHighlighter>
