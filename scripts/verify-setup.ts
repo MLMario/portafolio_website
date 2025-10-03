@@ -6,7 +6,7 @@ import { config } from 'dotenv'
 config({ path: '.env.local' })
 
 import { prisma } from '../src/lib/prisma'
-import { supabase, supabaseAdmin } from '../src/lib/supabase'
+import { supabase, getSupabaseAdmin } from '../src/lib/supabase'
 import { anthropic } from '../src/lib/anthropic'
 
 async function verifySetup() {
@@ -41,6 +41,7 @@ async function verifySetup() {
   // 3. Test Supabase Storage Buckets
   console.log('3️⃣ Testing Supabase Storage Buckets...')
   try {
+    const supabaseAdmin = getSupabaseAdmin()
     const { data: buckets, error } = await supabaseAdmin.storage.listBuckets()
     if (error) throw error
 
