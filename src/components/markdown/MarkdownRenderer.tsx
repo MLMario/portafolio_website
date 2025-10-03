@@ -57,8 +57,8 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
 
             return !isInline && match ? (
               <SyntaxHighlighter
-                // @ts-ignore - Style types are incompatible but work at runtime
-                style={vscDarkPlus}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                style={vscDarkPlus as any}
                 language={match[1]}
                 PreTag="div"
               >

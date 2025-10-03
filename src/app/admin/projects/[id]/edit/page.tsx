@@ -71,8 +71,8 @@ export default function EditProjectPage({ params }: EditProjectPageProps) {
       setTags(project.tags || [])
       setIsPublished(project.isPublished)
       setMarkdownContent(project.markdownContent)
-    } catch (err: any) {
-      setError(err.message || 'Failed to load project')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load project')
     } finally {
       setIsLoading(false)
     }
@@ -179,8 +179,8 @@ export default function EditProjectPage({ params }: EditProjectPageProps) {
 
       router.push('/admin/projects')
       router.refresh()
-    } catch (err: any) {
-      setError(err.message || 'Failed to update project')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update project')
     } finally {
       setIsSaving(false)
     }

@@ -67,7 +67,7 @@ export function ContactSection() {
                 <Linkedin className="h-6 w-6 text-primary" />
               </div>
               <CardTitle>LinkedIn</CardTitle>
-              <CardDescription>Let's connect</CardDescription>
+              <CardDescription>Let&apos;s connect</CardDescription>
             </CardHeader>
             <CardContent className="text-center">
               <Button variant="outline" className="w-full" asChild>

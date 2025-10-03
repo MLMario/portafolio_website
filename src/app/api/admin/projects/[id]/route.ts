@@ -10,17 +10,17 @@ interface RouteParams {
 async function migrateProjectFiles(
   oldSlug: string,
   newSlug: string,
-  currentProject: any
+  currentProject: { markdownFileUrl?: string; thumbnail?: string; imageUrls?: string[] }
 ) {
   const bucket = 'projects'
-  const migratedUrls: any = {}
+  const migratedUrls: Record<string, string | string[]> = {}
 
   try {
     // Check if old folder exists by trying to list files
-    let files: any[] = []
+    let files: { name: string }[] = []
     try {
       files = await storage.listFiles(bucket, `projects/${oldSlug}`)
-    } catch (error) {
+    } catch {
       // Folder doesn't exist, nothing to migrate
       return migratedUrls
     }
@@ -84,15 +84,15 @@ async function migrateProjectFiles(
       // Delete images subfolder first
       try {
         await storage.deleteFolder(bucket, `projects/${oldSlug}/images`)
-      } catch (error) {
+      } catch {
         // Images folder might not exist
       }
 
       // Delete main folder
       await storage.deleteFolder(bucket, `projects/${oldSlug}`)
       console.log(`Migrated and cleaned up folder: projects/${oldSlug} -> projects/${newSlug}`)
-    } catch (error) {
-      console.warn('Could not delete old folder:', error)
+    } catch (err) {
+      console.warn('Could not delete old folder:', err)
       // Non-critical, don't fail the migration
     }
 
@@ -145,7 +145,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     let title, description, category, tags, isPublished, markdownContent
     let thumbnail: File | null = null
     let markdownFile: File | null = null
-    let imageFiles: File[] = []
+    const imageFiles: File[] = []
 
     const supabaseAdmin = getSupabaseAdmin()
 
@@ -193,7 +193,20 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     }
 
     // Prepare update data
-    let updateData: any = {
+    const updateData: {
+      description?: string
+      category?: string
+      tags?: string[]
+      isPublished?: boolean
+      markdownContent?: string
+      updatedAt: string
+      title?: string
+      slug?: string
+      markdownFileUrl?: string
+      thumbnail?: string
+      imageUrls?: string[]
+      publishedAt?: string | null
+    } = {
       description,
       category,
       tags,
@@ -281,13 +294,13 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
         )
 
         // Update URLs if files were migrated
-        if (migratedUrls.markdownFileUrl) {
+        if (migratedUrls.markdownFileUrl && typeof migratedUrls.markdownFileUrl === 'string') {
           updateData.markdownFileUrl = migratedUrls.markdownFileUrl
         }
-        if (migratedUrls.thumbnail) {
+        if (migratedUrls.thumbnail && typeof migratedUrls.thumbnail === 'string') {
           updateData.thumbnail = migratedUrls.thumbnail
         }
-        if (migratedUrls.imageUrls) {
+        if (migratedUrls.imageUrls && Array.isArray(migratedUrls.imageUrls)) {
           updateData.imageUrls = migratedUrls.imageUrls
         }
       } catch (migrationError) {

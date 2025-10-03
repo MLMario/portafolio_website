@@ -1,12 +1,10 @@
 Developing Prompt
-
 <context>
-- Currently, editing a project does not cause for a new project to be created at supabase storage = projects
-- This is the intended behaviour and needs to be kept that way.
-- Currently, project edit form does not include options for uploading markdowns, images and thumbnails
+- There is no feature at admin/projects to select which projects are included in the featured section at homepage
 </context>
 
 <build_process>
+- Plan any schema changes needed to implement <build_objective>
 - Plan steps to implement this build taking
 - Plan testing steps once this build is complete
 - Execute code changes or actions needed to achieve <build_objective>
@@ -14,15 +12,18 @@ Developing Prompt
 </build_process>
 
 <build_objective>
-- Include upload bottom for markdown, thumbnail . Review upload_options.png as reference
-- This bottoms should be between basic information and the content editor
-- make sure that updating the supabase project following the logic: 
-if user changes project title: 
-- Create new project at the projects storage
-- migrate current files from existing project to new project folder 
-- replace  (upset) or add the markdown, images or thumbnails the user wants to replace or add 
-If user doesnt change project title:
-- replace  (upset) or add the markdown, images or thumbnails the user wants to replace or add 
+At admin/projects:
+- Add a cta next to the left of category at the project list in admin/projects. Reference position in square box at project_list.png
+- The CTA should make the project avilable at the homepage feature project section.
+- If project not currently included in feature projects at homepage:
+  -- design would be white / gray tones
+  -- clicking on it would include projects in homepage feature section. 
+- if project currently included in feature projects at homepage: 
+  -- design would be blacktones
+  -- clicking on it would remove it from the projects in homepage feature section. 
+At homepage:
+- Feature project section at homepage should be scrollable horizontally, so that user can scroll through all featured projects in case there are more projects
+
 </build_objective>
 
 <developing>
@@ -32,4 +33,12 @@ If user doesnt change project title:
 
 Start <developing>
 
-Update Developer Plan Prompt
+Features to Implement: 
+
+- Chat Page with RAG to get to know me
+- at admin/projects add bottom to allow select up to 3 featured projects at homepage
+- About Page with Work Experience
+
+<update>
+
+</update>

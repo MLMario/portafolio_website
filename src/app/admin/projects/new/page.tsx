@@ -113,8 +113,8 @@ export default function NewProjectPage() {
 
       router.push('/admin/projects')
       router.refresh()
-    } catch (err: any) {
-      setError(err.message || 'Failed to create project')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create project')
     } finally {
       setIsLoading(false)
     }

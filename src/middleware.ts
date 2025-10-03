@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Create response object to handle cookie updates
-  let response = NextResponse.next({
+  const response = NextResponse.next({
     request: {
       headers: request.headers,
     },

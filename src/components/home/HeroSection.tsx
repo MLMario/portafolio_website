@@ -23,7 +23,7 @@ export function HeroSection() {
 
         {/* Greeting */}
         <p className="mb-4 text-sm font-medium text-muted-foreground">
-          Hello, I'm
+          Hello, I&apos;m
         </p>
 
         {/* Name */}

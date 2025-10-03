@@ -28,9 +28,9 @@ export default function AdminLoginPage() {
       console.log('Sign in successful:', result)
       router.push('/admin/projects')
       router.refresh()
-    } catch (err: any) {
+    } catch (err) {
       console.error('Sign in error:', err)
-      setError(err.message || 'Failed to sign in')
+      setError(err instanceof Error ? err.message : 'Failed to sign in')
     } finally {
       setIsLoading(false)
     }
