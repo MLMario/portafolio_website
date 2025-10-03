@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { anthropic } from '@/lib/anthropic'
 import { MessageParam } from '@anthropic-ai/sdk/resources'
 import { z } from 'zod'
+import { logger, createTimer } from '@/lib/logger'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -32,16 +33,21 @@ const chatRequestSchema = z.object({
 })
 
 export async function POST(req: NextRequest) {
+  const timer = createTimer()
+
   try {
+    logger.apiRequest('POST', '/api/chat')
+
     // Parse and validate request body
     const rawBody = await req.json()
     const validationResult = chatRequestSchema.safeParse(rawBody)
 
     if (!validationResult.success) {
+      logger.warn('Chat API validation failed', { errors: validationResult.error.issues })
       return new Response(
         JSON.stringify({
           error: 'Invalid request body',
-          details: validationResult.error.errors
+          details: validationResult.error.issues
         }),
         {
           status: 400,
@@ -51,6 +57,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body: ChatRequestBody = validationResult.data
+    logger.debug('Chat request validated', { projectId: body.projectId, messageCount: body.messages.length })
     const { projectTitle, markdownContent, imageUrls, messages } = body
 
     // Convert images to base64 if needed (for vision support)
@@ -72,7 +79,7 @@ export async function POST(req: NextRequest) {
             },
           }
         } catch (error) {
-          console.error('Error fetching image:', url, error)
+          logger.warn('Error fetching image for chat', { url, error: error instanceof Error ? error.message : 'Unknown error' })
           return null
         }
       })
@@ -155,7 +162,7 @@ Answer in less than 300 words unless user is asking for a detailed explanation o
           controller.enqueue(encoder.encode('data: [DONE]\n\n'))
           controller.close()
         } catch (error) {
-          console.error('Streaming error:', error)
+          logger.error('Streaming error in chat', error)
           controller.error(error)
         }
       },
@@ -169,10 +176,12 @@ Answer in less than 300 words unless user is asking for a detailed explanation o
       },
     })
   } catch (error) {
-    console.error('Chat API error:', error)
+    const duration = timer.end()
+    logger.error('Chat API error', error, { durationMs: duration })
 
     // Handle specific error types
     if (error instanceof SyntaxError) {
+      logger.apiResponse('POST', '/api/chat', 400, duration)
       return new Response(
         JSON.stringify({ error: 'Invalid JSON in request body' }),
         {
@@ -186,6 +195,7 @@ Answer in less than 300 words unless user is asking for a detailed explanation o
     if (error && typeof error === 'object' && 'status' in error) {
       const apiError = error as { status?: number; message?: string }
       if (apiError.status === 429) {
+        logger.apiResponse('POST', '/api/chat', 429, duration, { reason: 'rate_limit' })
         return new Response(
           JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
           {
@@ -195,6 +205,7 @@ Answer in less than 300 words unless user is asking for a detailed explanation o
         )
       }
       if (apiError.status === 401) {
+        logger.apiResponse('POST', '/api/chat', 500, duration, { reason: 'auth_failed' })
         return new Response(
           JSON.stringify({ error: 'API authentication failed' }),
           {
@@ -206,6 +217,7 @@ Answer in less than 300 words unless user is asking for a detailed explanation o
     }
 
     // Generic error response
+    logger.apiResponse('POST', '/api/chat', 500, duration)
     return new Response(
       JSON.stringify({ error: 'Failed to process chat request' }),
       {

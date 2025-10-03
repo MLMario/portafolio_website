@@ -48,12 +48,12 @@ export default function Error({
           >
             Try again
           </button>
-          <a
-            href="/"
+          <button
+            onClick={() => window.location.href = '/'}
             className="inline-block px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             Go home
-          </a>
+          </button>
         </div>
       </div>
     </div>

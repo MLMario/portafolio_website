@@ -99,20 +99,21 @@ export default function GlobalError({
               >
                 Try again
               </button>
-              <a
-                href="/"
+              <button
+                onClick={() => window.location.href = '/'}
                 style={{
                   display: 'inline-block',
                   padding: '0.75rem 1.5rem',
                   backgroundColor: '#e5e7eb',
                   color: '#1f2937',
                   borderRadius: '0.5rem',
-                  textDecoration: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
                   fontSize: '1rem',
                 }}
               >
                 Go home
-              </a>
+              </button>
             </div>
           </div>
         </div>

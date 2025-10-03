@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { Prisma } from '@prisma/client'
+import { Prisma } from '@/generated/prisma'
 import { requireAuth } from '@/lib/auth-server'
 
 export async function PATCH(
