@@ -49,7 +49,7 @@ You have access to all the charts and figures in this project. Reference them wh
         media_type: img.mediaType as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
         data: img.base64,
       },
-      cache_control: { type: 'ephemeral' },
+      cache_control: { type: 'ephemeral' } as const,
     })),
   ]
 
