@@ -29,7 +29,8 @@
       "Bash(node:*)",
       "Bash(npm:*)",
       "Bash(if exist .next rmdir /s /q .next)",
-      "Bash(tee:*)"
+      "Bash(tee:*)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []

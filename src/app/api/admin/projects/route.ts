@@ -3,6 +3,10 @@ import { requireAuth } from '@/lib/auth-server'
 import { storage, getSupabaseAdmin } from '@/lib/supabase'
 import { createId } from '@paralleldrive/cuid2'
 
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+export const maxDuration = 60
+
 export async function GET() {
   try {
     // Verify authentication
