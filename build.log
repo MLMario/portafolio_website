@@ -9,21 +9,21 @@
 
    Creating an optimized production build ...
 
-[2m[181.45ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[187.86ms][22m [@tailwindcss/postcss] src\app\globals.css
 [2m[  0.06ms][22m  [2m ↳ [22mQuick bail check
-[2m[ 52.05ms][22m  [2m ↳ [22mSetup compiler
-[2m[  0.50ms][22m    [2m ↳ [22mPostCSS AST -> Tailwind CSS AST
-[2m[ 51.52ms][22m    [2m ↳ [22mCreate compiler
-[2m[  0.26ms][22m  [2m ↳ [22mRegister full rebuild paths
-[2m[  1.38ms][22m  [2m ↳ [22mSetup scanner
-[2m[ 23.33ms][22m  [2m ↳ [22mScan for candidates
-[2m[ 39.90ms][22m  [2m ↳ [22mRegister dependency messages
-[2m[ 39.51ms][22m  [2m ↳ [22mBuild utilities
-[2m[ 20.67ms][22m  [2m ↳ [22mOptimization
-[2m[  0.77ms][22m    [2m ↳ [22mAST -> CSS
-[2m[ 10.88ms][22m    [2m ↳ [22mLightning CSS
-[2m[  8.99ms][22m    [2m ↳ [22mCSS -> PostCSS AST
-[2m[  3.91ms][22m  [2m ↳ [22mUpdate PostCSS AST
+[2m[ 33.63ms][22m  [2m ↳ [22mSetup compiler
+[2m[  0.39ms][22m    [2m ↳ [22mPostCSS AST -> Tailwind CSS AST
+[2m[ 33.22ms][22m    [2m ↳ [22mCreate compiler
+[2m[  0.25ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[  1.34ms][22m  [2m ↳ [22mSetup scanner
+[2m[ 19.03ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 37.23ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 29.91ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 62.39ms][22m  [2m ↳ [22mOptimization
+[2m[  0.75ms][22m    [2m ↳ [22mAST -> CSS
+[2m[ 53.84ms][22m    [2m ↳ [22mLightning CSS
+[2m[  7.76ms][22m    [2m ↳ [22mCSS -> PostCSS AST
+[2m[  3.66ms][22m  [2m ↳ [22mUpdate PostCSS AST
 
  ✓ Compiled successfully in 7.4s
    Linting and checking validity of types ...
@@ -63,16 +63,40 @@
 87:53  Warning: 'mimeType' is defined but never used.  @typescript-eslint/no-unused-vars
 
 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
-Failed to compile.
+   Collecting page data ...
+   Generating static pages (0/12) ...
+   Generating static pages (3/12) 
+   Generating static pages (6/12) 
+   Generating static pages (9/12) 
+ ✓ Generating static pages (12/12)
+   Finalizing page optimization ...
+   Collecting build traces ...
 
-./src/app/api/chat/route.ts:46:82
-Type error: Property 'errors' does not exist on type 'ZodError<{ projectId: string; projectTitle: string; markdownContent: string; imageUrls: string[]; messages: { role: "user" | "assistant"; content: string; }[]; }>'.
+Route (app)                                 Size  First Load JS
+┌ ƒ /                                    6.15 kB         120 kB
+├ ○ /_not-found                          1.04 kB         103 kB
+├ ○ /admin/login                         3.26 kB         159 kB
+├ ○ /admin/projects                        14 kB         194 kB
+├ ƒ /admin/projects/[id]/edit            3.91 kB         194 kB
+├ ○ /admin/projects/new                  2.44 kB         193 kB
+├ ƒ /api/admin/projects                    143 B         102 kB
+├ ƒ /api/admin/projects/[id]               143 B         102 kB
+├ ƒ /api/admin/projects/[id]/feature       143 B         102 kB
+├ ƒ /api/admin/projects/[id]/publish       143 B         102 kB
+├ ƒ /api/chat                              143 B         102 kB
+├ ƒ /api/projects                          143 B         102 kB
+├ ○ /projects                            6.23 kB         147 kB
+├ ƒ /projects/[slug]                      427 kB         541 kB
+├ ○ /robots.txt                            143 B         102 kB
+└ ƒ /sitemap.xml                           143 B         102 kB
++ First Load JS shared by all             102 kB
+  ├ chunks/255-ef426b31f85a29bf.js       45.6 kB
+  ├ chunks/4bd1b696-917db93a599ee996.js  54.3 kB
+  └ other shared chunks (total)           2.1 kB
 
-[0m [90m 44 |[39m
- [90m 45 |[39m     [36mif[39m ([33m![39mvalidationResult[33m.[39msuccess) {
-[31m[1m>[22m[39m[90m 46 |[39m       logger[33m.[39mwarn([32m'Chat API validation failed'[39m[33m,[39m { errors[33m:[39m validationResult[33m.[39merror[33m.[39merrors })
- [90m    |[39m                                                                                  [31m[1m^[22m[39m
- [90m 47 |[39m       [36mreturn[39m [36mnew[39m [33mResponse[39m(
- [90m 48 |[39m         [33mJSON[39m[33m.[39mstringify({
- [90m 49 |[39m           error[33m:[39m [32m'Invalid request body'[39m[33m,[39m[0m
-Next.js build worker exited with code: 1 and signal: null
+
+ƒ Middleware                             71.3 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
