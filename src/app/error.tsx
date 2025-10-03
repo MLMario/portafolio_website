@@ -12,6 +12,9 @@ export default function Error({
   useEffect(() => {
     // Log the error to an error reporting service
     console.error('Application error:', error)
+    console.error('Error message:', error.message)
+    console.error('Error digest:', error.digest)
+    console.error('Error stack:', error.stack)
   }, [error])
 
   return (
@@ -28,18 +31,19 @@ export default function Error({
           We encountered an unexpected error. Please try again.
         </p>
 
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mb-8 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-left">
-            <p className="text-sm font-mono text-red-600 dark:text-red-400 break-all">
-              {error.message}
+        <div className="mb-8 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-left">
+          <p className="text-sm font-mono text-red-600 dark:text-red-400 break-all">
+            {error.message || 'An unexpected error occurred'}
+          </p>
+          {error.digest && (
+            <p className="text-xs text-gray-500 mt-2">
+              Error ID: {error.digest}
             </p>
-            {error.digest && (
-              <p className="text-xs text-gray-500 mt-2">
-                Error ID: {error.digest}
-              </p>
-            )}
-          </div>
-        )}
+          )}
+          <p className="text-xs text-gray-500 mt-2">
+            Check browser console for more details
+          </p>
+        </div>
 
         <div className="space-x-4">
           <button

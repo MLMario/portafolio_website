@@ -7,26 +7,45 @@ import { prisma } from '@/lib/prisma'
 import { categoryLabels } from '@/config/site'
 
 export async function FeaturedProjects() {
-  // Fetch featured projects
-  const projects = await prisma.project.findMany({
-    where: {
-      isPublished: true,
-      isFeatured: true,
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      description: true,
-      thumbnail: true,
-      tags: true,
-      category: true,
-      createdAt: true,
-    },
-  })
+  type ProjectData = {
+    id: string
+    title: string
+    slug: string
+    description: string
+    thumbnail: string | null
+    tags: string[]
+    category: string
+    createdAt: Date
+  }
+
+  let projects: ProjectData[] = []
+
+  try {
+    // Fetch featured projects
+    projects = await prisma.project.findMany({
+      where: {
+        isPublished: true,
+        isFeatured: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        description: true,
+        thumbnail: true,
+        tags: true,
+        category: true,
+        createdAt: true,
+      },
+    })
+  } catch (error) {
+    console.error('Error fetching featured projects:', error)
+    // Return empty state on database error
+    projects = []
+  }
 
   if (projects.length === 0) {
     return (
