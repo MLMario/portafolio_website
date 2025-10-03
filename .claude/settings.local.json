@@ -24,7 +24,12 @@
       "Bash(npx tsc:*)",
       "Bash(npm run lint:*)",
       "Bash(npm run typecheck:*)",
-      "Bash(npm run validate:*)"
+      "Bash(npm run validate:*)",
+      "Bash(npm run build:*)",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(if exist .next rmdir /s /q .next)",
+      "Bash(tee:*)"
     ],
     "deny": [],
     "ask": []

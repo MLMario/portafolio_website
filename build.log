@@ -1,0 +1,78 @@
+
+> portfolio_website@0.1.0 build
+> next build
+
+   ▲ Next.js 15.5.4
+   - Environments: .env.local, .env
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+   Creating an optimized production build ...
+
+[2m[181.45ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.06ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 52.05ms][22m  [2m ↳ [22mSetup compiler
+[2m[  0.50ms][22m    [2m ↳ [22mPostCSS AST -> Tailwind CSS AST
+[2m[ 51.52ms][22m    [2m ↳ [22mCreate compiler
+[2m[  0.26ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[  1.38ms][22m  [2m ↳ [22mSetup scanner
+[2m[ 23.33ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 39.90ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 39.51ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 20.67ms][22m  [2m ↳ [22mOptimization
+[2m[  0.77ms][22m    [2m ↳ [22mAST -> CSS
+[2m[ 10.88ms][22m    [2m ↳ [22mLightning CSS
+[2m[  8.99ms][22m    [2m ↳ [22mCSS -> PostCSS AST
+[2m[  3.91ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+ ✓ Compiled successfully in 7.4s
+   Linting and checking validity of types ...
+
+./src/app/admin/projects/[id]/edit/page.tsx
+55:6  Warning: React Hook useEffect has a missing dependency: 'params'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/projects/page.tsx
+3:10  Warning: 'ProjectsList' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/admin/AdminNav.tsx
+8:10  Warning: 'siteConfig' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/admin/ProtectedRoute.tsx
+15:6  Warning: React Hook useEffect has a missing dependency: 'checkAuth'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+25:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/chat/ChatWidget.tsx
+91:22  Warning: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/home/FeaturedProjects.tsx
+77:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/markdown/MarkdownRenderer.tsx
+50:18  Warning: 'node' is defined but never used.  @typescript-eslint/no-unused-vars
+73:17  Warning: 'node' is defined but never used.  @typescript-eslint/no-unused-vars
+76:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+100:15  Warning: 'node' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/markdown/TableOfContents.tsx
+33:62  Warning: 'index' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/components/projects/ProjectCard.tsx
+31:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/lib/anthropic.ts
+87:53  Warning: 'mimeType' is defined but never used.  @typescript-eslint/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+Failed to compile.
+
+./src/app/api/chat/route.ts:46:82
+Type error: Property 'errors' does not exist on type 'ZodError<{ projectId: string; projectTitle: string; markdownContent: string; imageUrls: string[]; messages: { role: "user" | "assistant"; content: string; }[]; }>'.
+
+[0m [90m 44 |[39m
+ [90m 45 |[39m     [36mif[39m ([33m![39mvalidationResult[33m.[39msuccess) {
+[31m[1m>[22m[39m[90m 46 |[39m       logger[33m.[39mwarn([32m'Chat API validation failed'[39m[33m,[39m { errors[33m:[39m validationResult[33m.[39merror[33m.[39merrors })
+ [90m    |[39m                                                                                  [31m[1m^[22m[39m
+ [90m 47 |[39m       [36mreturn[39m [36mnew[39m [33mResponse[39m(
+ [90m 48 |[39m         [33mJSON[39m[33m.[39mstringify({
+ [90m 49 |[39m           error[33m:[39m [32m'Invalid request body'[39m[33m,[39m[0m
+Next.js build worker exited with code: 1 and signal: null
