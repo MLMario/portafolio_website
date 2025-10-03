@@ -418,6 +418,36 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
 
     const supabaseAdmin = getSupabaseAdmin()
 
+    // Step 1: Fetch project details to get slug for storage cleanup
+    const { data: project, error: fetchError } = await supabaseAdmin
+      .from('Project')
+      .select('slug')
+      .eq('id', id)
+      .single()
+
+    if (fetchError || !project) {
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 })
+    }
+
+    // Step 2: Delete storage files (both old and new structures)
+    // Try to delete but don't fail if storage doesn't exist
+    try {
+      // Delete old structure subfolder first (if exists)
+      try {
+        await storage.deleteFolder('projects', `projects/${project.slug}/images`)
+      } catch {
+        // Old structure folder may not exist
+      }
+
+      // Delete main project folder (includes all files in new structure)
+      await storage.deleteFolder('projects', `projects/${project.slug}`)
+      console.log(`Deleted storage folder: projects/${project.slug}`)
+    } catch (storageError) {
+      console.warn('Storage cleanup failed (files may not exist):', storageError)
+      // Continue with database deletion even if storage cleanup fails
+    }
+
+    // Step 3: Delete database record
     const { error } = await supabaseAdmin
       .from('Project')
       .delete()
